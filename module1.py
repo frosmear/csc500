@@ -2,8 +2,15 @@
 # Basic Mathematical Operations
 
 # Prompt the user for two numbers
-num1 = float(input("Enter the first number: "))
-num2 = float(input("Enter the second number: "))
+validinput = False
+
+while not validinput:
+    try:
+        num1 = float(input("Enter the first number: "))
+        num2 = float(input("Enter the second number: "))
+        validinput = True
+    except:
+        print("Invalid input try harder")
 
 # Perform arithmetic operations
 addition = num1 + num2
