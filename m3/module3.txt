@@ -1,16 +1,9 @@
-Lists are useful in programming because they allow us to store multiple related pieces of information together. Instead of creating a separate variable for every item, a list can hold an entire collection and make it easier to organize, access, and modify the information.
+Choosing the correct Python data type is important and I'm going to keep using my side project to manage a personal media library (I call it darfcloud) as my examples for my online classwork.  Its a bit over kill with metadata but. Using the right type makes the information easier to work with as I upgrade it from 2009 to 2026 data standards.  It was originally coded in PHP - don't judge - we all mistakes from our youth.
 
-Three Real-Life Scenarios
+I use integers for things like file IDs (probably should be hex UUIDs today), file sizes, storage locations, and quality ratings. Strings are used for filenames, titles, and file paths. I use booleans for things that are basically yes or no, such as whether a file has been processed or marked for deletion.
 
-My Movie Collection
-A list would be useful for keeping track of movies I've digitized to my personal library (darfcloud). Each movie includes information such as its title, release year, genre, and rating. A list would make it easy to keep everything organized and I need to add ratings to determine if the kids can watch.  
+Dictionaries are the most useful data type in this project. Each file has a dictionary containing information such as its filename, title, file size, media type, and storage locations. This lets me access the information by a descriptive name instead of trying to remember which position it is stored in.  The Python lists of dictionaries are simple to convert to store in the database.
 
-Family Photos
-A list could be used to organize information about my family photos. Each item could contain details such as the file name, date the photo was taken, location, and the family members pictured. From class I want to learn about CV models I can run on a local machine since my wife is paranoid about facial recognition on the net.
+I use floats, such as the duration of a video, where decimal values happen. Sets aree useful when I need a collection of unique values, such as different file types.
 
-My Wife's Book Collection
-A list is also a good way to store information about my wife's book collection. Each book can be represented by a dictionary containing information such as the ISBN, title, author, publisher, publication year, and language. I wrote a script that scrapped OpenLibrary for her collection during COVID but the code rotted since I had to go back to work.
-
-This is the one I'll do a Python code example for. For the book collection, I would use a list containing dictionaries. Each dictionary represents one book and stores several pieces of information about that book. These are just the first three random ones in my database.
-I chose a list of dictionaries because the books are all related, but each book also has multiple pieces of information associated with it. The list allows me to store all of the books together, while each dictionary allows me to describe the individual book using labels such as "title", "author", and "publication_year". It's also simple to dump in a SQL database. There's better databases today but I started the project a decade ago.
-Should I take the time to upgrade everything to a modern database?
+The main reason for choosing the correct data type is that the data needs to match how I plan to use it. A file size stored as an integer can be compared or calculated, while a filename needs to be a string. It does help the indexing and speed performance - it's running on a woot.com laptop.  One thing I am still wondering about is how much the Python data type should be influenced by the database type when the same information is stored.
