@@ -1,6 +1,15 @@
 # CSC500 Module 3 Assignment
-# 
+"""
+# The assignment is 'Using the latest version of Python, select and complete ONE of the following two options...'
+# Since Python is picking which option and not me, I had to write functions that complete the assignment
+# regardless which path the Python picks
+#
+# Picking the option function
+#
+# The assignment didn't say how Python picks so I just went with random
 
+    
+    
 def doitmodulostyle():
     # This version does it in the "spirit" of the assignment using modulo math
     # in case the thing gets auto-graded I want full credit. 
