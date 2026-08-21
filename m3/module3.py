@@ -63,7 +63,7 @@ def alarm_clock():
         current_time = datetime.now()
         start_hour = current_time.hour
     else:
-        start_hour = int(input("Enter the starting hour (0-23): "))
+        start_hour = get_valid_int("Enter the starting hour (0-23): ")
   
         current_time = datetime.now().replace(
             hour=start_hour,
@@ -72,11 +72,11 @@ def alarm_clock():
             microsecond=0
         )
 
-    wait_hours = float(input("Enter the number of hours to wait: "))
+    wait_hours = get_valid_int("Enter the number of hours to wait: ")
 
     alarm_time = current_time + timedelta(hours=wait_hours)
 
-    print(f"\nStarting time: {current_time.strftime('%H:%M')}")
+    print(f"\nStarting ntime: {current_time.strftime('%H:%M')}")
     print(f"Alarm time:    {alarm_time.strftime('%H:%M')}")
     print("That method used datetime, here's the same thing using just modulo math:")
     doitmodulostyle(start_hour,wait_hours)  
@@ -92,11 +92,11 @@ def doitmodulostyle(start_time,hours_to_wait):
 
     # Calculations: Use modulo 24 to wrap around the clock
     alarm_time = (start_time + hours_to_wait) % 24
-    days_from_now = (start_time + hours_to_wait) / 24 # not sure this was required but to be safe
+    mids_from_now = (start_time + hours_to_wait) // 24 # not sure this was required but to be safe
 
     # Output: Display the final alarm time
     print(f"The alarm will go off at: {alarm_time}")
-    print(f"Days from now: {days_from_now}")
+    print(f"Midnights will happen: {mids_from_now} times")
 
 
 
