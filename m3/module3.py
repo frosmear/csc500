@@ -3,7 +3,8 @@
 # The assignment is 'Using the latest version of Python, select and complete ONE of the following two options...'
 # Since Python is picking which option and not me, I had to write functions that complete the assignment
 # regardless which path the Python picks
-#
+"""
+
 from datetime import datetime, timedelta
 import random
 
