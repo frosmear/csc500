@@ -99,7 +99,6 @@ def doitmodulostyle(start_time,hours_to_wait):
     print(f"Midnights will happen: {mids_from_now} times")
 
 
-
 def main():
     selected_option = random.randint(1, 2)
 
@@ -114,4 +113,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
