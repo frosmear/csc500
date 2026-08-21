@@ -8,7 +8,77 @@
 #
 # The assignment didn't say how Python picks so I just went with random
 
-    
+    Sure. This version randomly selects one of the two assignments when the program starts, so you don't have to choose. It still contains both programs, and the clock defaults to the current time while allowing a different start time.
+
+from datetime import datetime, timedelta
+import random
+
+
+# Professor: I completed both options in one program.
+# The program randomly selects which option to run.
+# Please grade whichever of the two options is better.
+
+
+def restaurant_meal_calculator():
+    print("\nRestaurant Meal Calculator")
+
+    food_charge = float(input("Enter the food charge: $"))
+
+    tip = food_charge * 0.18
+    tax = food_charge * 0.07
+    total = food_charge + tip + tax
+
+    print(f"\nFood charge: ${food_charge:.2f}")
+    print(f"18% tip:     ${tip:.2f}")
+    print(f"7% tax:      ${tax:.2f}")
+    print(f"Total:       ${total:.2f}")
+
+
+def clock_alarm():
+    print("\n24-Hour Clock Alarm")
+
+    use_current = input(
+        "Use the current time as the starting time? (y/n): "
+    ).lower()
+
+    if use_current == "y":
+        current_time = datetime.now()
+    else:
+        start_hour = int(input("Enter the starting hour (0-23): "))
+        start_minute = int(input("Enter the starting minute (0-59): "))
+
+        current_time = datetime.now().replace(
+            hour=start_hour,
+            minute=start_minute,
+            second=0,
+            microsecond=0
+        )
+
+    wait_hours = float(input("Enter the number of hours to wait: "))
+
+    alarm_time = current_time + timedelta(hours=wait_hours)
+
+    print(f"\nStarting time: {current_time.strftime('%H:%M')}")
+    print(f"Alarm time:    {alarm_time.strftime('%H:%M')}")
+
+
+def main():
+    selected_option = random.randint(1, 2)
+
+    print("Programming Logic Challenge")
+    print(f"Randomly selected option: {selected_option}")
+
+    if selected_option == 1:
+        restaurant_meal_calculator()
+    else:
+        clock_alarm()
+
+
+if __name__ == "__main__":
+    main()
+
+
+The important change is random.randint(1, 2), which gives the program either 1 or 2 and uses that result to decide which assignment to run.
     
 def doitmodulostyle():
     # This version does it in the "spirit" of the assignment using modulo math
