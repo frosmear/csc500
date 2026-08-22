@@ -27,52 +27,66 @@ class ItemToPurchase:
         item_total = self.item_price * self.item_quantity
         print(f"{self.item_quantity} x {self.item_name} @ ${self.item_price} = ${item_total}")
 
-def get_user_input():
-  # 
+class ShoppingCart:
+     def __init__(self, store_name="Crazy DarFs"):
+          self.store_name=store_name
+          self.cart_items = []
 
+     def add_itmes(self):
+          # Add items to cart until the user enters quit
+          # Returns a count of items added
+          item_count = 0
+          while True:
+               newitem = self.get_shopping_cart_item()
+               if newitem is None:
+                    return item_count
+               # Add the item to the shopping cart
+               self.cart_item.append(newitem)
+               item_count += 1
+         
+     def get_shopping_cart_item(self):
+          # Function that prompts user for input of an item
+          # Returns either an ItemToPurchase object
+          # or None if the user declines
+          #    
+          # Note: The instructions explicitly say the string quit but thats a poor idea in practice
+          # What if a user wants to buy 5 quilts and just typos
+          # I'd just make it a blank string - less typing - so this implementation quits on either
+          while True:
+               try:
+                    if item_name.strip().lower() in ("quit", ""):
+                         return None
+                    item_price = float(input("Enter the item price ($): "))
+                    item_quantity = int(input("Enter the item quantity: "))
+                    # Return ItemToPurchase object
+                         return ItemToPurchase(item_name, item_price, item_quantity)
+               except:
+                    print("Invalid inputs. Do it over")
+     
+     def print_cart_contents()
+          # Calculate the total cost
+          self.cart_total = 0.0
+     
+         for item in shopping_cart:
+             total = total + (item.item_price * item.item_quantity)
+     
+         # Display the results
+         print("\nTOTAL COST")
+         print("******************")
+     
+         for item in shopping_cart:
+             item.print_item_cost()
+     
+         print(f"Total: ${total}")
 
 def main():
-    # Create an empty shopping cart
-    shopping_cart = []
+     # Create an empty shopping cart
+     cart = ShoppingCart()
 
-    # Get items until the user enters quit
-    while True:
-        item_name = input("Enter the item name or quit to finish: ")
 
-        if item_name.strip().lower() == "quit":
-            break
 
-        input_good = False
-        while not input_good:
-            try:
-                item_price = float(input("Enter the item price: $"))
-                item_quantity = int(input("Enter the item quantity: "))
-                input_good = True
-            except:
-                # intro class, not worried about proper exceptions
-                print("Invalid inputs. Do it over")
-
-        # Create an ItemToPurchase object
-        item = ItemToPurchase(item_name, item_price, item_quantity)
-
-        # Add the item to the shopping cart
-        shopping_cart.append(item)
-
-    # Calculate the total cost
-    total = 0.0
-
-    for item in shopping_cart:
-        total = total + (item.item_price * item.item_quantity)
-
-    # Display the results
-    print("\nTOTAL COST")
-    print("******************")
-
-    for item in shopping_cart:
-        item.print_item_cost()
-
-    print(f"Total: ${total}")
-
+     
+     
 
 if __name__ == "__main__":
     main()
