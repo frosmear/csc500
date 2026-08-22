@@ -31,8 +31,9 @@ class ShoppingCart:
      def __init__(self, store_name="Crazy DarFs"):
           self.store_name=store_name
           self.cart_items = []
+          self.cart_total = 0.0
 
-     def add_itmes(self):
+     def add_items(self):
           # Add items to cart until the user enters quit
           # Returns a count of items added
           item_count = 0
@@ -54,21 +55,37 @@ class ShoppingCart:
           # I'd just make it a blank string - less typing - so this implementation quits on either
           while True:
                try:
+                    item_name = input("Enter the item name (or quit to exit): ")
                     if item_name.strip().lower() in ("quit", ""):
                          return None
                     item_price = float(input("Enter the item price ($): "))
                     item_quantity = int(input("Enter the item quantity: "))
                     # Return ItemToPurchase object
-                         return ItemToPurchase(item_name, item_price, item_quantity)
+                    return ItemToPurchase(item_name, item_price, item_quantity)
                except:
                     print("Invalid inputs. Do it over")
-     
-     def print_cart_contents(self)
-          # Calculate the total cost
+
+     def calc_total(self):
+          # Separates math from display logic
+          # Calculates the total cost and stores it
+          #
+          # Returns True on success, false if invalid item in cart
+          #
           self.cart_total = 0.0
+          try:
+               for item in self.cart_items:
+                    self.cart_total = self.cart_total + (item.item_price * item.item_quantity)
+               return True
+          except:
+               print("Warning: Unable to calculate cart total.")
+               # Lebowski Error condition
+               self.cart_total = 0.0
+               return False
      
-          for item in self.cart_items:
-               self.cart_total = self.cart_total + (item.item_price * item.item_quantity)
+
+     def print_cart_contents(self):
+          # Calculate the total cost
+          self.calc_total()
      
           # Display the results
           print("\n{self.store_name}")
