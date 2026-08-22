@@ -25,7 +25,7 @@ class ItemToPurchase:
     # Calculate the cost
     def print_item_cost(self):
         item_total = self.item_price * self.item_quantity
-        print(f"{self.item_quantity} x {self.item_name} @ ${self.item_price} = ${item_total}")
+        print(f"{self.item_quantity} x {self.item_name} @ ${self.item_price:.2f} = ${item_total:.2f}")
 
 class ShoppingCart:
      def __init__(self, store_name="Crazy DarFs"):
@@ -42,7 +42,7 @@ class ShoppingCart:
                if newitem is None:
                     return item_count
                # Add the item to the shopping cart
-               self.cart_item.append(newitem)
+               self.cart_items.append(newitem)
                item_count += 1
          
      def get_shopping_cart_item(self):
@@ -88,20 +88,20 @@ class ShoppingCart:
           self.calc_total()
      
           # Display the results
-          print("\n{self.store_name}")
+          print(f"\n{self.store_name}")
           print("******************")
      
           for item in self.cart_items:
                item.print_item_cost()
      
-          print(f"Total: ${self.cart_total}")
+          print(f"Total: ${self.cart_total:.2f}")
 
 def main():
      # Create an empty shopping cart
      cart = ShoppingCart()
 
      # Add items to it
-     cart.add_itmes()
+     cart.add_items()
 
      # Print the receipt view
      cart.print_cart_contents()
