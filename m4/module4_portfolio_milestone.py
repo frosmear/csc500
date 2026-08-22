@@ -89,6 +89,7 @@ class ShoppingCart:
      
           # Display the results
           print(f"\n{self.store_name}")
+          print("TOTAL COST")
           print("******************")
      
           for item in self.cart_items:
