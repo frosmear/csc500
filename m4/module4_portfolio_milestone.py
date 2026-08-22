@@ -63,30 +63,31 @@ class ShoppingCart:
                except:
                     print("Invalid inputs. Do it over")
      
-     def print_cart_contents()
+     def print_cart_contents(self)
           # Calculate the total cost
           self.cart_total = 0.0
      
-         for item in shopping_cart:
-             total = total + (item.item_price * item.item_quantity)
+          for item in self.cart_items:
+               self.cart_total = self.cart_total + (item.item_price * item.item_quantity)
      
-         # Display the results
-         print("\nTOTAL COST")
-         print("******************")
+          # Display the results
+          print("\n{self.store_name}")
+          print("******************")
      
-         for item in shopping_cart:
-             item.print_item_cost()
+          for item in self.cart_items:
+               item.print_item_cost()
      
-         print(f"Total: ${total}")
+          print(f"Total: ${self.cart_total}")
 
 def main():
      # Create an empty shopping cart
      cart = ShoppingCart()
 
+     # Add items to it
+     cart.add_itmes()
 
-
-     
-     
+     # Print the receipt view
+     cart.print_cart_contents()
 
 if __name__ == "__main__":
     main()
