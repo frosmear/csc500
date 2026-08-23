@@ -18,44 +18,45 @@ class RainfallChallenge:
         ]
         self.years = 0
         self.rainfall_data = []
-
-    def get_rainfall_data(self):
+    
+    def set_years(self):
         while True:
             try:
                 self.years = int(input("Enter the number of years: "))
-
                 if self.years > 0:
-                    break
-                else:
-                    print("The number of years must be greater than 0.")
+                    return True
+                print("The number of years must be greater than 0.")
             except:
                 print("Please enter a valid number of years.")
+
+    def get_rainfall_float(self,year,month):  
+        # Moves the value checking outside of loop to make easier to debug
+        while True:
+            try:
+                rainfall = float(input(f"Enter the rainfall for {self.months[month]} of year {year}: "))
+                if rainfall >= 0:
+                    return rainfall
+                print("Rainfall cannot be negative.")
+            except:
+                print("Please enter a valid number.")
+
+    def collect_user_data(self):
+        # Determine how many years user wants to enter
+        self.set_years()
 
         # Outer loop handles each year
         for year in range(1, self.years + 1):
 
             # Inner loop handles each month
             for month in range(12):
-                while True:
-                    try:
-                        rainfall = float(input(
-                            f"Enter the rainfall for {self.months[month]} of year {year}: "
-                        ))
-
-                        if rainfall >= 0:
-                            break
-                        else:
-                            print("Rainfall cannot be negative.")
-                    except:
-                        print("Please enter a valid number.")
-
+                rainfall = self.get_rainfall_float(year,month)
                 self.rainfall_data.append(rainfall)
 
     def calculate_rainfall(self):
         total_months = len(self.rainfall_data)
 
         # Calculate the total using a Pythonic list comprehension
-        total_rainfall = sum([rainfall for rainfall in self.rainfall_data])
+        total_rainfall = sum(self.rainfall_data)
 
         average = total_rainfall / total_months
 
@@ -66,11 +67,8 @@ class RainfallChallenge:
     def average_rainfall(self):
         print("\nPython chose: Average Rainfall\n")
 
-        self.get_rainfall_data()
+        self.collect_user_data()
         self.calculate_rainfall()
-
-
-
 
 
 
@@ -118,8 +116,8 @@ def main():
         challenge = RainfallChallenge()
         challenge.average_rainfall()
     else:
-        challenge = BookstoreChallenge()
-        challenge.bookstore_points()
-
+        #challenge = BookstoreChallenge()
+        #challenge.bookstore_points()
+        print('books')
 if __name__ == "__main__":
     main()
