@@ -74,6 +74,8 @@ class BookstoreChallenge:
         # This is hard-coded from most to least point threshold values.
         # I'm assuming these are NOT cummulative (reading 6 books does not get the points for 2/4)
         # ie they would not get 50 points, just 30. 
+        #
+        # Note: This would not work pre-Python 3.7 as it does depend on dictionary order
         self.point_table = {
             8: 60,
             6: 30,
@@ -107,8 +109,6 @@ class BookstoreChallenge:
 
         print(f"Books purchased: {self.books}")
         print(f"Bookstore points awarded: {self.points}")
-
-
 
 
 def main():
