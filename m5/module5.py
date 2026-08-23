@@ -54,10 +54,7 @@ class RainfallChallenge:
 
     def calculate_rainfall(self):
         total_months = len(self.rainfall_data)
-
-        # Calculate the total using a Pythonic list comprehension
         total_rainfall = sum(self.rainfall_data)
-
         average = total_rainfall / total_months
 
         print(f"\nTotal months: {total_months}")
