@@ -1,10 +1,9 @@
-# CSC500 Module 4 Assignment
+# CSC500 Module 5 Assignment
 """
 # The assignment is 'Using the latest version of Python, select and complete ONE of the following two options...'
 # Since Python is picking which option and not me, I wrote two classes that complete the assignment
 # regardless which path Python picks.
 #
-# Option 1 also includes a calculation using a Pythonic list comprehension.
 """
 
 import random
@@ -68,38 +67,48 @@ class RainfallChallenge:
         self.calculate_rainfall()
 
 
-
-
 class BookstoreChallenge:
+    def __init__(self):
+        self.books = 0
+        self.points = 0
+        # This is hard-coded from most to least point threshold values.
+        # I'm assuming these are NOT cummulative (reading 6 books does not get the points for 2/4)
+        # ie they would not get 50 points, just 30. 
+        self.point_table = {
+            8: 60,
+            6: 30,
+            4: 15,
+            2: 5,
+            0: 0
+        }
 
-    def bookstore_points(self):
-        print("\nPython chose: Bookstore Points\n")
-
+    def get_book_count(self):
         while True:
             try:
-                books = int(input("Enter the number of books purchased this month: "))
-
-                if books >= 0:
-                    break
+                self.books = int(input("Enter the number of books purchased this month: "))
+                if self.books >= 0:
+                   return True
                 else:
                     print("The number of books cannot be negative.")
             except:
                 print("Please enter a valid number of books.")
 
-        # Award points based on the number of books purchased
-        if books >= 8:
-            points = 60
-        elif books >= 6:
-            points = 30
-        elif books >= 4:
-            points = 15
-        elif books >= 2:
-            points = 5
-        else:
-            points = 0
+    def calculate_points(self):
+        for threshold, points in self.point_table.items():
+            if self.books >= threshold:
+                self.points = points
+                return True
 
-        print(f"Books purchased: {books}")
-        print(f"Bookstore points awarded: {points}")
+    def bookstore_points(self):
+        print("\nPython chose: Bookstore Points\n")
+
+        self.get_book_count()
+        self.calculate_points()
+
+        print(f"Books purchased: {self.books}")
+        print(f"Bookstore points awarded: {self.points}")
+
+
 
 
 def main():
@@ -113,8 +122,8 @@ def main():
         challenge = RainfallChallenge()
         challenge.average_rainfall()
     else:
-        #challenge = BookstoreChallenge()
-        #challenge.bookstore_points()
-        print('books')
+        challenge = BookstoreChallenge()
+        challenge.bookstore_points()
+        
 if __name__ == "__main__":
     main()
