@@ -88,7 +88,7 @@ class ShoppingCart:
           self.calc_total()
      
           # Display the results
-          print(f"\n{self.store_name}")
+          print(f"\n{self.store_nadame}")
           print("TOTAL COST")
           print("******************")
      

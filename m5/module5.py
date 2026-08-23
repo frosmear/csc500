@@ -22,7 +22,8 @@ class RainfallChallenge:
         while True:
             try:
                 self.years = int(input("Enter the number of years: "))
-                if self.years > 0:
+                # I allow zero and just don't do anything
+                if self.years > -1:
                     return True
                 print("The number of years must be greater than 0.")
             except:
@@ -53,12 +54,16 @@ class RainfallChallenge:
 
     def calculate_rainfall(self):
         total_months = len(self.rainfall_data)
+        if total_months == 0:
+            print("No data entered, exiting.")
+            return True
         total_rainfall = sum(self.rainfall_data)
         average = total_rainfall / total_months
 
         print(f"\nTotal months: {total_months}")
         print(f"Total rainfall: {total_rainfall:.2f} inches")
         print(f"Average rainfall per month: {average:.2f} inches")
+        return True
 
     def average_rainfall(self):
         print("\nPython chose: Average Rainfall\n")
