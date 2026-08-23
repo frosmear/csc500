@@ -9,40 +9,37 @@
 
 import random
 
-
 class RainfallChallenge:
-
-    def average_rainfall(self):
-        print("\nPython chose: Average Rainfall\n")
-
-        months = [
+    def __init__(self):
+        self.months = [
             "January", "February", "March", "April",
             "May", "June", "July", "August",
             "September", "October", "November", "December"
         ]
+        self.years = 0
+        self.rainfall_data = []
 
+    def get_rainfall_data(self):
         while True:
             try:
-                years = int(input("Enter the number of years: "))
+                self.years = int(input("Enter the number of years: "))
 
-                if years > 0:
+                if self.years > 0:
                     break
                 else:
                     print("The number of years must be greater than 0.")
             except:
                 print("Please enter a valid number of years.")
 
-        rainfall_data = []
-
         # Outer loop handles each year
-        for year in range(1, years + 1):
+        for year in range(1, self.years + 1):
 
             # Inner loop handles each month
             for month in range(12):
                 while True:
                     try:
                         rainfall = float(input(
-                            f"Enter the rainfall for {months[month]} of year {year}: "
+                            f"Enter the rainfall for {self.months[month]} of year {year}: "
                         ))
 
                         if rainfall >= 0:
@@ -52,18 +49,30 @@ class RainfallChallenge:
                     except:
                         print("Please enter a valid number.")
 
-                rainfall_data.append(rainfall)
+                self.rainfall_data.append(rainfall)
 
-        total_months = len(rainfall_data)
+    def calculate_rainfall(self):
+        total_months = len(self.rainfall_data)
 
         # Calculate the total using a Pythonic list comprehension
-        total_rainfall = sum([rainfall for rainfall in rainfall_data])
+        total_rainfall = sum([rainfall for rainfall in self.rainfall_data])
 
         average = total_rainfall / total_months
 
         print(f"\nTotal months: {total_months}")
         print(f"Total rainfall: {total_rainfall:.2f} inches")
         print(f"Average rainfall per month: {average:.2f} inches")
+
+    def average_rainfall(self):
+        print("\nPython chose: Average Rainfall\n")
+
+        self.get_rainfall_data()
+        self.calculate_rainfall()
+
+
+
+
+
 
 
 class BookstoreChallenge:
