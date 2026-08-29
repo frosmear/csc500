@@ -103,7 +103,7 @@ class ShoppingCart:
         # Check to see if inn cart
         if not self.is_incart(item_name):
             print("Item {item_name) not found in cart. Nothing removed.")      
-            return None
+            return False
 
         # Iterate through cart
         for item in self.cart_items:
@@ -116,21 +116,25 @@ class ShoppingCart:
         # happens with database back-ends.  In production this would get logged,
         # in a class I do a print to see where I screwed up
         print("Possible bug in remove_item logic, investigate.")
+        return False
         
     # Modify an existing item in the shopping cart
     def modify_item(self, moditem):
+        #
+        # Input is an ItemToPurchase object with the desired new values
+        # If an item of the same name exists, it will remove the existing
+        # and add the new one.
+        # Note: This obviously assumes order does not matter in cart...
+        #
         # This method assumes the calling method has validated user-input
         # in production likely have a trust-but-verify logic
         # so a rogue API couldn't do bad things
-        for existing_item in self.cart_items:
-            if existing_item.item_name.strip().lower() == moditem.item_name.strip().lower():
-                existing_item.item_price = moditem.item_price
-                existing_item.item_quantity = moditem.item_quantity
-                return True
-
-        # In theory should never reach...
-        print("Item not found in cart. Nothing modified.")
-        return False
+        #
+        if not self.is_incart(moditem):
+            print("Item not found in cart. Nothing modified.")
+            return False
+        # Remove old version
+        if not self.remove_item(mod)
 
     # Get item information from the user and change its quantity
     def change_item_quantity(self):
