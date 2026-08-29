@@ -40,6 +40,10 @@ class ShoppingCart:
             if cart_item.item_name.lower() == item.item_name.lower():
                 return True
         return False
+
+    def get_item_byname(self,item_name):
+        # Searches the cart for an item 
+
         
     # Add an item to the shopping cart
     def add_item(self):
@@ -51,7 +55,13 @@ class ShoppingCart:
                 if item_name.strip() == "":
                     print("No item name entered, aborting entry")
                     return None
-    
+
+                # Check if item already in cart
+                if self.is_incart(item_name):
+                    print("You already have that item in the cart. Use the modify function to change it.")
+                    return None
+
+                # Obtain price info
                 item_price = float(input("Enter item price: $"))
     
                 if item_price <= 0.0:
@@ -70,36 +80,54 @@ class ShoppingCart:
                 return item
     
             except ValueError as error:
+                # Note: I realize any error forces re-entry of ALL values
+                # Production code would separate this to individual try/excepts
                 print(f"Invalid input: {error}")
                 print("Try again. Enter a blank item name to abort.")
 
     # Remove an item from the shopping cart by name
     def remove_item(self, item_name):
         print("\nRemove Item")
+        # Get name from user
         item_name = input("Enter item name to remove: ")
+
+        # Check to see if inn cart
+        if not self.is_incart(item_name):
+            print("Item {item_name) not found in cart. Nothing removed.")      
+            return None
+
+        # Iterate through cart
         for item in self.cart_items:
             # case-insensitive and whitespace ignoring
             if item.item_name.strip().lower() == item_name.strip().lower():
                 self.cart_items.remove(item)
                 return True
-        print("Item {item_name) not found in cart. Nothing removed.")
-        return None
+
+        # In theory logic should NEVER get here, in reality weird stuff
+        # happens with database back-ends.  In production this would get logged,
+        # in a class I do a print to see where I screwed up
+        print("Possible bug in remove_item logic, investigate.")
         
     # Modify an existing item in the shopping cart
-    def modify_item(self, item):
+    def modify_item(self, moditem):
+        # This method assumes the calling method has validated user-input
+        # in production likely have a trust-but-verify logic
+        # so a rogue API couldn't do bad things
         for existing_item in self.cart_items:
-            if existing_item.item_name == item.item_name:
-                existing_item.item_price = item.item_price
-                existing_item.item_quantity = item.item_quantity
-                return
+            if existing_item.item_name.strip().lower() == moditem.item_name.strip().lower():
+                existing_item.item_price = moditem.item_price
+                existing_item.item_quantity = moditem.item_quantity
+                return True
 
+        # In theory should never reach...
         print("Item not found in cart. Nothing modified.")
+        return False
 
     # Get item information from the user and change its quantity
     def change_item_quantity(self):
         print("\nCHANGE ITEM QUANTITY")
 
-        item_name = input("Enter item name: ")
+        item_name = input("Enter item name: ").strip()
 
         try:
             new_quantity = int(input("Enter new quantity: "))
