@@ -61,19 +61,33 @@ class ShoppingCart:
         print(f"There were more than one match: {matches}")
         return True  # technically, may want to consider how calling logic expects it
 
-    def get_item_byname(self, item_name):
-        # Return the matching ItemToPurchase, or False if not found.
+    def get_item_byname(self, item):
+        # Input of item can be either a string containing an item name 
+        #  or ItemToPurchase object (which will use the item_name attribute)
         #
-        # Check for existance
-        if not self.is_incart(item_name):
+        # Returns ItemToPurchase object if found, False if not in cart
+ 
+        if isinstance(item, str):
+            item_name = item
+        elif isinstance(item, ItemToPurchase):
+            item_name = item.item_name
+        else:
+            print("Warning: get_item_byname() requires a string or ItemToPurchase object.")
             return False
-        # Iterate in case-insensitive search.
-        for item in self.cart_items:
-            if item.item_name.lower() == item_name.lower():
-                return item
-        # Should never reach here, helpful to debug
+    
+        # Check for existence
+        if not self.is_incart(item):
+            return False
+    
+        # Iterate in case-insensitive search
+        for cart_item in self.cart_items:
+            if cart_item.item_name.strip().lower() == item_name.strip().lower():
+                return cart_item
+    
+        # Should never reach here, helpful for debugging
         print("Error finding item by name")
-        
+        return False
+   
     # Add an item to the shopping cart
     def add_item(self):
         print("\nAdding item to cart")
