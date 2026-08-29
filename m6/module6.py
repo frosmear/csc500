@@ -7,42 +7,73 @@
 # through a menu-driven interface.
 
 from datetime import datetime
+from dateutil import parser
+from dateutil.relativedelta import relativedelta
 
 class ItemToPurchase:
-    def __init__(self, item_name="none", item_price=0.0, item_quantity=0):
+    def init(self, item_name="none", item_price=0.0, item_quantity=0):
+        # Note: Intro level class, assuming valid values passed
+        # Production code would re-validate inputs
         self.item_name = item_name
         self.item_price = item_price
         self.item_quantity = item_quantity
 
     def print_item_cost(self):
         item_total = self.item_price * self.item_quantity
-        print(
-            f"{self.item_name} {self.item_quantity} @ "
-            f"${self.item_price:.2f} = ${item_total:.2f}"
-        )
-
+        print(f"{self.item_name} {self.item_quantity} @ ${self.item_price:.2f} = ${item_total:.2f}")
 
 class ShoppingCart:
-    def __init__(self,customer_name="none",current_date=None):
+    def __init__(self, customer_name="none", order_date=None):
         self.customer_name = customer_name
-        if current_date is None:
-             current_date = datetime.now()
-        self.current_date = current_date
+       if order_date is None:
+            order_date = datetime.now()
+        self.order_date = order_date
         self.cart_items = []
 
     # Add an item to the shopping cart
-    def add_item(self, item):
-        self.cart_items.append(item)
+    def add_item(self):
+        print("\nAdding item to cart")
+        while True:
+            try:
+                item_name = input("Enter item name: ")
+    
+                if item_name.strip() == "":
+                    print("No item name entered, aborting entry")
+                    return None
+    
+                item_price = float(input("Enter item price: $"))
+    
+                if item_price <= 0.0:
+                    raise ValueError("Item price must be positive")
+    
+                item_quantity = int(input("Enter item quantity: "))
+    
+                if item_quantity <= 0:
+                    raise ValueError("Item quantity must be positive")
+    
+                # Valid inputs - create item object and store it
+                item = ItemToPurchase(item_name, item_price, item_quantity)
+                self.cart_items.append(item)
+    
+                print(f"{item_name} added to cart.")
+                return item
+    
+            except ValueError as error:
+                print(f"Invalid input: {error}")
+                print("Try again. Enter a blank item name to abort.")
 
     # Remove an item from the shopping cart by name
     def remove_item(self, item_name):
+        print("\nRemove Item")
+        item_name = input("Enter item name to remove: ")
         for item in self.cart_items:
-            if item.item_name == item_name:
+            # case-insensitive and whitespace ignoring
+            if item.item_name.strip().lower() == item_name.strip().lower():
                 self.cart_items.remove(item)
-                return
-
-        print("Item not found in cart. Nothing removed.")
-
+                return True
+        print("Item {item_name) not found in cart. Nothing removed.")
+        return None
+        
     # Modify an existing item in the shopping cart
     def modify_item(self, item):
         for existing_item in self.cart_items:
@@ -52,6 +83,26 @@ class ShoppingCart:
                 return
 
         print("Item not found in cart. Nothing modified.")
+
+    # Get item information from the user and change its quantity
+    def change_item_quantity(self):
+        print("\nCHANGE ITEM QUANTITY")
+
+        item_name = input("Enter item name: ")
+
+        try:
+            new_quantity = int(input("Enter new quantity: "))
+
+            modified_item = ItemToPurchase(
+                item_name,
+                0.0,
+                new_quantity
+            )
+
+            self.modify_item(modified_item)
+
+        except ValueError:
+            print("Invalid quantity.")
 
     # Return the total quantity of all items
     def get_num_items_in_cart(self):
@@ -100,9 +151,78 @@ class ShoppingCart:
         for item in self.cart_items:
             print(item.item_name)
 
+# Main Retail Store class. 
+# At this point just has one shopping cart for one customer
+# But could be easily scaled.
+class RetailStore:
+    def init(self, store_name="Crazy DarF's Bargain Sprockets"):
+        self.store_name = store_name
+        self.cart = ShoppingCart()
 
-def print_menu(cart):
-    while True:
+    # Define a name validation method
+    # This simply makes sure its not empty but in production code would check for repeats
+    # and that is not fake like a Moe's Tavern customer
+    def validate_customer_name():
+        while True:
+            customer_name = input("Enter customer's name: ").strip()
+            if customer_name:
+                return customer_name
+            print("Customer name cannot be empty.")
+
+    # Define a method to select a purchase date
+    # Defaults to now if enter is pressed 
+    # Enforces it between now and a year from now 
+    def get_purchase_date():
+        # Prompt gives an example of a day a week in the future
+        example_date = (datetime.now() + timedelta(days=7)).strftime("%m/%d/%Y") 
+        while True:
+            try:
+                now = datetime.now()
+                date_text = input(f"Enter order date (e.g., {example_date}) or ENTER for ASAP: ").strip()
+            
+                # Blank input defaults to the current date/time
+                if date_text == "":
+                    return now
+
+                # Parse the input
+                purchase_date = parser.parse(date_text)
+            
+                # If the user entered today in any reasonable format,
+                # use the current date/time rather than midnight.
+                if purchase_date.date() == now.date():
+                    return now
+
+                # Compare to make sure not in the past
+                if purchase_date < now:
+                    raise ValueError("The date cannot be in the past.")
+                
+                # Make sure its not too far in the future
+                one_year_from_now = now + timedelta(days=365)
+
+                if purchase_date > one_year_from_now:
+                    raise ValueError("The date cannot be more than one year in the future.")
+                # Passed test, return as datetime object
+                return purchase_date
+
+        except (ValueError, OverflowError) as error:
+            print(f"Invalid date: {error}")
+            print("Please enter a valid date between today and one year from today.")
+
+    # Get customer information and update the shopping cart
+    def get_customer_info(self):
+        # Print friendly message and ask for info
+        print(f"Welcome to {self.store_name}!")
+        # Ask for their name
+        self.cart.customer_name = self.validate_customer_name()       
+        self.cart.order_date = self.get_purchase_date()
+        return True
+        
+    def print_customer(self):
+        print(f"\nCustomer name: {self.cart.customer_name}")
+        print(f"Order date: {self.cart.current_date}")
+
+    def print_menu_text(self):
+        # Separates print statements from logic loop
         print("\nMENU")
         print("a - Add item to cart")
         print("r - Remove item from cart")
@@ -110,79 +230,41 @@ def print_menu(cart):
         print("i - Output item descriptions")
         print("o - Output shopping cart")
         print("q - Quit")
+        return True
 
-        choice = input("Choose an option: ").strip().lower()
-
-        if choice == "a":
-            print("\nADD ITEM")
-            item_name = input("Enter item name: ")
-
-            try:
-                item_price = float(input("Enter item price: $"))
-                item_quantity = int(input("Enter item quantity: "))
-
-                new_item = ItemToPurchase(
-                    item_name,
-                    item_price,
-                    item_quantity
-                )
-
-                cart.add_item(new_item)
-                print(f"{item_name} added to cart.")
-
-            except ValueError:
-                print("Invalid input. Item was not added.")
-
-        elif choice == "r":
-            print("\nREMOVE ITEM")
-            item_name = input("Enter item name to remove: ")
-            cart.remove_item(item_name)
-
-        elif choice == "c":
-            print("\nCHANGE ITEM QUANTITY")
-            item_name = input("Enter item name: ")
-
-            try:
-                new_quantity = int(input("Enter new quantity: "))
-
-                modified_item = ItemToPurchase(
-                    item_name,
-                    0.0,
-                    new_quantity
-                )
-
-                cart.modify_item(modified_item)
-
-            except ValueError:
-                print("Invalid quantity.")
-
-        elif choice == "i":
-            cart.print_descriptions()
-
-        elif choice == "o":
-            cart.print_total()
-
-        elif choice == "q":
-            print("Goodbye!")
-            break
-
-        else:
-            print("Invalid option. Please try again.")
-
-
+    # Display the shopping cart menu and process user selections
+    def display_menu(self):
+        while True:
+            self.print_menu_text()
+            choice = input("Choose an option: ").strip().lower()
+    
+            if choice == "q":
+                print("Goodbye!")
+                return True
+    
+            elif choice == "a":
+                self.cart.add_item()
+    
+            elif choice == "r":
+                self.cart.remove_item()
+    
+            elif choice == "c":
+                self.cart.change_item_quantity()
+    
+            elif choice == "i":
+                self.cart.print_descriptions()
+    
+            elif choice == "o":
+                self.cart.print_total()
+    
+            else:
+                print("Invalid option. Please try again.")
+    
+# Main Program loop
 def main():
-    print("ONLINE SHOPPING CART")
+    store = RetailStore()
+    store.get_customer_info()
+    store.display_menu()
 
-    customer_name = input("Enter customer's name: ")
-    current_date = input("Enter today's date: ")
-
-    cart = ShoppingCart(customer_name, current_date)
-
-    print(f"\nCustomer name: {customer_name}")
-    print(f"Today's date: {current_date}")
-
-    print_menu(cart)
-
-
-if __name__ == "__main__":
-    main()
+if name == "main":
+main()
