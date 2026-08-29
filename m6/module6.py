@@ -88,7 +88,7 @@ class ShoppingCart:
         print("Error finding item by name")
         return False
    
-    # Add an item to the shopping cart
+    # Add an item to the shopping cart by querying user for info
     def add_item(self):
         print("\nAdding item to cart")
         while True:
@@ -128,13 +128,9 @@ class ShoppingCart:
                 print(f"Invalid input: {error}")
                 print("Try again. Enter a blank item name to abort.")
 
-    # Remove an item from the shopping cart by name
+    # Delete an item from the shopping cart by name
     def remove_item(self, item_name):
-        print("\nRemove Item")
-        # Get name from user
-        item_name = input("Enter item name to remove: ")
-
-        # Check to see if inn cart
+        # Check to see if in cart
         if not self.is_incart(item_name):
             print("Item {item_name) not found in cart. Nothing removed.")      
             return False
@@ -144,13 +140,16 @@ class ShoppingCart:
             # case-insensitive and whitespace ignoring
             if item.item_name.strip().lower() == item_name.strip().lower():
                 self.cart_items.remove(item)
-                return True
+        return True
+    
+    # Remove an item from the shopping cart by asking user name of item
+    def get_name_to_remove(self):
+        print("\nRemove Item")
+        # Get name from user
+        item_name = input("Enter item name to remove: ")
 
-        # In theory logic should NEVER get here, in reality weird stuff
-        # happens with database back-ends.  In production this would get logged,
-        # in a class I do a print to see where I screwed up
-        print("Possible bug in remove_item logic, investigate.")
-        return False
+        # Execute remove method
+        return self.remove_item(item_name)
         
     # Modify an existing item in the shopping cart
     def modify_item(self, moditem):
@@ -167,18 +166,56 @@ class ShoppingCart:
         if not self.is_incart(moditem):
             print("Item not found in cart. Nothing modified.")
             return False
-        # Remove old version
-        if not self.remove_item(mod)
+
+        # Delete item currently with that name
+        if not self.delete_item(moditem.item_name):
+
+        # Add the update item
+        self.cart_items.append(moditem)
+
+        # Note: The instructions did NOT indicate the order of items was important.
+        #  This logic would be more complicated if the was required to be perserved.
+        return True
+
+    def get_valid_quantity(self,maxval=100):
+        # Queries the user until they enter a valid integer quantity
+        # Returns an int between -1 and 100
+        while True:
+            try:
+                new_q = int(input("Enter new quantity: "))
+                if new_q < 0:
+                    return -1
+                if new_q < maxval:
+                    return new_q
+                # Value is too high, make them try again
+                print(f"The website can not handle that amount.  Enter less than {maxval}")
+            except:
+                # not an integer try again
+                print("Please try again with a valid integer.  Enter -1 to abort.")
+                    
 
     # Get item information from the user and change its quantity
     def change_item_quantity(self):
         print("\nCHANGE ITEM QUANTITY")
 
         item_name = input("Enter item name: ").strip()
+        quant_item = self.get_item_byname(item_name):
+        if not quant_item:
+            print(f"Item {item_name} not found in cart, nothing to change")
+            return False
 
-        try:
-            new_quantity = int(input("Enter new quantity: "))
+        # Get the new quantity (-1 == abort)
+        new_quantity = self.get_valid_quantity()
 
+        # Handle abort
+        if new_quantity < 0:
+            print("Aborting quantity update")
+            return False
+
+        # Treat zero case
+        if new_quantity == 0:
+            print("Quantity of zero requested, removing from cart")
+            return self. 
             modified_item = ItemToPurchase(
                 item_name,
                 0.0,
