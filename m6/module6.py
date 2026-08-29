@@ -25,10 +25,13 @@ class ItemToPurchase:
 class ShoppingCart:
     def __init__(self, customer_name="none", order_date=None):
         self.customer_name = customer_name
-       if order_date is None:
+        if order_date is None:
             order_date = datetime.now()
         self.order_date = order_date
         self.cart_items = []
+
+    # Utility Function to check if item in cart
+    def is_incart(self,i)
 
     # Add an item to the shopping cart
     def add_item(self):
