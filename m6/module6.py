@@ -31,8 +31,16 @@ class ShoppingCart:
         self.cart_items = []
 
     # Utility Function to check if item in cart
-    def is_incart(self,i)
-
+    def is_incart(self, item):
+        # Return True if an item with the same name is in the cart.
+        # Items are stored with Case kept
+        # But dupe checked case-insensitive.
+        # In production code probably would be wiser to use UUID rather than namestring
+        for cart_item in self.cart_items:
+            if cart_item.item_name.lower() == item.item_name.lower():
+                return True
+        return False
+        
     # Add an item to the shopping cart
     def add_item(self):
         print("\nAdding item to cart")
