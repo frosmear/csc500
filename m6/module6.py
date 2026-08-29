@@ -41,9 +41,18 @@ class ShoppingCart:
                 return True
         return False
 
-    def get_item_byname(self,item_name):
-        # Searches the cart for an item 
-
+    def get_item_byname(self, item_name):
+        # Return the matching ItemToPurchase, or False if not found.
+        #
+        # Check for existance
+        if not self.is_incart(item_name):
+            return False
+        # Iterate in case-insensitive search.
+        for item in self.cart_items:
+            if item.item_name.lower() == item_name.lower():
+                return item
+        # Should never reach here, helpful to debug
+        print("Error finding item by name")
         
     # Add an item to the shopping cart
     def add_item(self):
