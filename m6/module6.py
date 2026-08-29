@@ -1,8 +1,8 @@
 # CSC500 Module 6 Portfolio Milestone
 #
-# Online Shopping Cart - Part 2
+# Online Shopping Cart - Part Deux
 #
-# This program creates an ItemToPurchase class and a ShoppingCart
+# This program creates an ItemToPurchase, ShoppingCart, and RetailStore
 # class. The user can add, remove, modify, and display items
 # through a menu-driven interface.
 
