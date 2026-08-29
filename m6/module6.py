@@ -32,14 +32,34 @@ class ShoppingCart:
 
     # Utility Function to check if item in cart
     def is_incart(self, item):
-        # Return True if an item with the same name is in the cart.
+        # Input of item can be either a string containing an item name 
+        #  or ItemToPurchase object (which will use the item_name attribute)
+        #
+        # Return True if an item is in the cart, using a case-insensitive name match.
+        #
         # Items are stored with Case kept
-        # But dupe checked case-insensitive.
         # In production code probably would be wiser to use UUID rather than namestring
+        if isinstance(item, str):
+            item_name = item
+        elif isinstance(item, ItemToPurchase):
+            item_name = item.item_name
+        else:
+            print("Warning: is_incart() requires a string or ItemToPurchase object.")
+            return False
+            
+        # Check each item for a match (this is slower but detects cart corruption)
+        matches = []
         for cart_item in self.cart_items:
-            if cart_item.item_name.lower() == item.item_name.lower():
-                return True
-        return False
+            if cart_item.item_name.lower() == item_name.lower():
+                matches.append(cart_item.item_name)
+    
+        # Return boolean result with warning if corruption detected
+        if len(matches) == 1:
+            return True
+        if len(matches) == 0:
+            return False
+        print(f"There were more than one match: {matches}")
+        return True  # technically, may want to consider how calling logic expects it
 
     def get_item_byname(self, item_name):
         # Return the matching ItemToPurchase, or False if not found.
