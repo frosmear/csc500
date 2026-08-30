@@ -6,11 +6,11 @@
 # The course number is used as the key so the program can retrieve
 # the room, instructor, and meeting time for a course.
 #
-# Meeting times were not provided in the assignment, so I created
-# sample Fall 2026 meeting dates/times for the demonstration.
 
 from datetime import datetime
 
+# If I were doing this for a government training office this would almost
+# certainly being in an Excel spreadsheet I'd dump to CSV and parse
 
 course_rooms = {
     "CSC101": "3004",
@@ -27,6 +27,9 @@ course_instructors = {
     "NET110": "Burke",
     "COM241": "Lee"
 }
+
+# Meeting times were not provided in the assignment, so I created
+# sample Fall 2026 meeting dates/times for the demonstration.
 
 course_meeting_times = {
     "CSC101": datetime(2026, 9, 8, 9, 0),
