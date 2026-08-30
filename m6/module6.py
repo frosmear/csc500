@@ -11,7 +11,7 @@ from dateutil import parser
 from dateutil.relativedelta import relativedelta
 
 class ItemToPurchase:
-    def init(self, item_name="none", item_price=0.0, item_quantity=0):
+    def __init__(self, item_name="none", item_price=0.0, item_quantity=0):
         # Note: Intro level class, assuming valid values passed
         # Production code would re-validate inputs
         self.item_name = item_name
@@ -362,7 +362,7 @@ class ShoppingCart:
 # At this point just has one shopping cart for one customer
 # But could be easily scaled.
 class RetailStore:
-    def init(self, store_name="Crazy DarF's Bargain Sprockets"):
+    def __init__(self, store_name="Crazy DarF's Bargain Sprockets"):
         self.store_name = store_name
         self.cart = ShoppingCart()
 
