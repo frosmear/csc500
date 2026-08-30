@@ -6,7 +6,7 @@
 # class. The user can add, remove, modify, and display items
 # through a menu-driven interface.
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from dateutil import parser
 from dateutil.relativedelta import relativedelta
 
@@ -293,11 +293,30 @@ class ShoppingCart:
 
     # Remove an item from the shopping cart by asking user for name
     def get_name_to_remove(self):
+
+        # Check for empty cart
+        if not self.cart_items:
+            print("\nCart is empty nothing to remove")
+            return None
+        
         print("\nRemove Item")
 
         item_name = input("Enter item name to remove: ")
 
-        return self.remove_item(item_name)
+        # Check if in cart
+        if not self.is_incart(item_name):
+            print(f"The cart does not contain {item_name}")
+            return False
+
+        # Remove using remove_item method
+        if not self.remove_item(item_name):
+            print("Remove attempt failed")
+            return False
+
+        # Report success
+        print(f"All {item_name} have been removed from cart.")
+        return True
+
 
     # Get a valid quantity from the user
     def get_valid_quantity(self, maxval=100):
@@ -327,6 +346,12 @@ class ShoppingCart:
 
     # Get item information from the user and change its quantity
     def change_item_quantity(self):
+
+        # Check for empty cart
+        if not self.cart_items:
+            print("\nCart is empty nothing to change")
+            return None
+                
         print("\nCHANGE ITEM QUANTITY")
 
         item_name = input("Enter item name: ").strip()
@@ -382,7 +407,7 @@ class RetailStore:
     # Define a method to select a purchase date
     # Defaults to now if enter is pressed 
     # Enforces it between now and a year from now 
-    def get_purchase_date():
+    def get_purchase_date(self):
         # Prompt gives an example of a day a week in the future
         example_date = (datetime.now() + timedelta(days=7)).strftime("%m/%d/%Y") 
         while True:
@@ -453,10 +478,10 @@ class RetailStore:
                 return True
     
             elif choice == "a":
-                self.cart.add_item()
+                self.cart.get_info_to_add_item()
     
             elif choice == "r":
-                self.cart.remove_item()
+                self.cart.get_name_to_remove()
     
             elif choice == "c":
                 self.cart.change_item_quantity()
@@ -474,7 +499,7 @@ class RetailStore:
 def main():
     store = RetailStore()
     store.get_customer_info()
-    store.display_menu()
+    store.print_menu()
 
 if __name__ == "__main__":
     main()
