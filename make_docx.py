@@ -78,9 +78,8 @@ class HomeworkPackager:
             f"Student: {self.student_name}"
         )
 
-
     def add_pseudocode(self):
-        """Add pseudocode from the configured Markdown file."""
+        """Add pseudocode as plain text, preserving indentation."""
     
         paragraph = self.document.add_paragraph()
         run = paragraph.add_run("Pseudocode")
@@ -95,49 +94,16 @@ class HomeworkPackager:
     
         with self.pseudocode_file.open("r", encoding="utf-8") as file:
             for line in file:
-                line = line.rstrip()
+                # Preserve indentation and blank lines.
+                paragraph = self.document.add_paragraph()
+                paragraph.paragraph_format.space_after = Pt(0)
     
-                if not line:
-                    self.document.add_paragraph()
-                    continue
+                run = paragraph.add_run(line.rstrip("\n"))
+                run.font.name = "Courier New"
     
-                if line.startswith("### "):
-                    self.document.add_paragraph(
-                        line[4:],
-                        style="Heading 3"
-                    )
     
-                elif line.startswith("## "):
-                    self.document.add_paragraph(
-                        line[3:],
-                        style="Heading 2"
-                    )
     
-                elif line.startswith("# "):
-                    self.document.add_paragraph(
-                        line[2:],
-                        style="Heading 1"
-                    )
-    
-                elif line.startswith("- "):
-                    self.document.add_paragraph(
-                        line[2:],
-                        style="List Bullet"
-                    )
-    
-                elif (
-                    len(line) > 2
-                    and line[0].isdigit()
-                    and ". " in line
-                ):
-                    self.document.add_paragraph(
-                        line.split(". ", 1)[1],
-                        style="List Number"
-                    )
-    
-                else:
-                    self.document.add_paragraph(line)
-    
+        
     
     def add_screenshots(self):
         """Add all PNG screenshots from the configured directory."""
