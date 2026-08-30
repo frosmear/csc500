@@ -271,35 +271,33 @@ class HomeworkPackager:
     # GIT
     # ========================================================
 
-    def git_commit(self):
-        """Add the generated document and commit it."""
+   def git_commit(self):
+    """Add the generated document and commit it."""
 
-        commit_message = self.config.get(
-            "git_commit_message",
-            f"Package {self.assignment_title}"
+    if self.config.get("git_commit", "false").lower() != "true":
+        print("Git commit deactivated in configuration.")
+        return
+
+    commit_message = self.config.get(
+        "git_commit_message",
+        f"Package {self.assignment_title}"
+    )
+
+    try:
+        subprocess.run(
+            ["git", "add", str(self.output_file)],
+            check=True
         )
 
-        try:
+        subprocess.run(
+            ["git", "commit", "-m", commit_message],
+            check=True
+        )
 
-            subprocess.run(
-                ["git", "add", str(self.output_file)],
-                check=True
-            )
+        print(f"Git commit created: {commit_message}")
 
-            subprocess.run(
-                ["git", "commit", "-m", commit_message],
-                check=True
-            )
-
-            print(
-                f"Git commit created: {commit_message}"
-            )
-
-        except subprocess.CalledProcessError as error:
-
-            print(
-                f"Git operation failed: {error}"
-            )
+    except subprocess.CalledProcessError as error:
+        print(f"Git operation failed: {error}")
 
 
     # ========================================================
@@ -307,21 +305,13 @@ class HomeworkPackager:
     # ========================================================
 
     def build(self):
-        """Build the complete homework package."""
-
+        # Build the complete homework package.
         self.add_title()
         self.add_pseudocode()
         self.add_screenshots()
         self.add_source_code()
         self.save()
-
-        if self.config.get(
-            "git_commit",
-            "false"
-        ).lower() == "true":
-
-            self.git_commit()
-
+        self.git_commit()
 
 # ============================================================
 # MAIN
