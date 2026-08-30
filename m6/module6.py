@@ -81,19 +81,38 @@ class ShoppingCart:
         return True
 
     # Modify an existing ItemToPurchase object in the shopping cart
+    # Also checks for corruption
     def modify_item(self, moditem: ItemToPurchase) -> bool:
-        if not self.is_incart(moditem):
+        search_name = moditem.item_name.strip().lower()
+        matching_items = []
+
+        for item in self.cart_items:
+            if item.item_name.strip().lower() == search_name:
+                matching_items.append(item)
+    
+        if not matching_items:
             print("Item not found in cart. Nothing modified.")
             return False
-
-        # Remove the existing item(s)
-        if not self.remove_item(moditem.item_name):
-            print("Error deleting item.")
-            return False
-
-        # Add the updated item
-        self.cart_items.append(moditem)
-
+    
+        if len(matching_items) > 1:
+            print(
+                f"Warning: Found {len(matching_items)} duplicate "
+                f"items named '{moditem.item_name}'. "
+                f"Duplicates will be removed."
+            )
+    
+        # Modify the first matching object
+        matching_items[0].item_price = moditem.item_price
+        matching_items[0].item_quantity = moditem.item_quantity
+    
+        # Remove all other duplicates
+        self.cart_items = [
+            item for item in self.cart_items
+            if (
+                item is matching_items[0]
+                or item.item_name.strip().lower() != search_name
+            )
+        ]
         return True
 
     # Return the total quantity of all items
