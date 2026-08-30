@@ -23,245 +23,81 @@ class ItemToPurchase:
         print(f"{self.item_name} {self.item_quantity} @ ${self.item_price:.2f} = ${item_total:.2f}")
 
 class ShoppingCart:
-    def __init__(self, customer_name="none", order_date=None, current_date="Janaury 1, 2020"):
+    def __init__(
+        self,
+        customer_name="none",
+        order_date=None,
+        current_date="January 1, 2020"
+    ):
         self.customer_name = customer_name
+
         if order_date is None:
             order_date = datetime.now()
+
         self.order_date = order_date
         self.cart_items = []
-        # The instructions explicity said I had to have a string named current_date
-        # and default to "January 1, 2020".  It makes no sense to treat as string and
-        # not a datetime so created order_date to do useful things 
+
+        # Required by assignment:
+        # current_date must be a string and default to
+        # "January 1, 2020".
         self.current_date = current_date
 
-    # Utility Function to check if item in cart
-    def is_incart(self, item):
-        # Input of item can be either a string containing an item name 
-        #  or ItemToPurchase object (which will use the item_name attribute)
-        #
-        # Return True if an item is in the cart, using a case-insensitive name match.
-        #
-        # Items are stored with Case kept
-        # In production code probably would be wiser to use UUID rather than namestring
-        if isinstance(item, str):
-            item_name = item
-        elif isinstance(item, ItemToPurchase):
-            item_name = item.item_name
-        else:
-            print("Warning: is_incart() requires a string or ItemToPurchase object.")
-            return False
-            
-        # Check each item for a match (this is slower but detects cart corruption)
-        matches = []
-        for cart_item in self.cart_items:
-            if cart_item.item_name.lower() == item_name.lower():
-                matches.append(cart_item.item_name)
-    
-        # Return boolean result with warning if corruption detected
-        if len(matches) == 1:
-            return True
-        if len(matches) == 0:
-            return False
-        print(f"There were more than one match: {matches}")
-        return True  # technically, may want to consider how calling logic expects it
+    # ============================================================
+    # CORE SHOPPING CART METHODS - REQUIRED BY ASSIGNMENT
+    # ============================================================
 
-    def get_item_byname(self, item):
-        # Input of item can be either a string containing an item name 
-        #  or ItemToPurchase object (which will use the item_name attribute)
-        #
-        # Returns ItemToPurchase object if found, False if not in cart
- 
-        if isinstance(item, str):
-            item_name = item
-        elif isinstance(item, ItemToPurchase):
-            item_name = item.item_name
-        else:
-            print("Warning: get_item_byname() requires a string or ItemToPurchase object.")
-            return False
-    
-        # Check for existence
-        if not self.is_incart(item):
-            return False
-    
-        # Iterate in case-insensitive search
-        for cart_item in self.cart_items:
-            if cart_item.item_name.strip().lower() == item_name.strip().lower():
-                return cart_item
-    
-        # Should never reach here, helpful for debugging
-        print("Error finding item by name")
-        return False
-
-    
+    # Add an ItemToPurchase object to the shopping cart
     def add_item(self, item: ItemToPurchase) -> bool:
-        # The instructions explicity stated I had to have a method called
-        # add_item(ItemToPurchase): Adds an object to the list.
-        #
-        # In the real world I suspect this would do some validation to an object
-        # and return a bool of success; in this simplistic example just appending to a list
-        #
         self.cart_items.append(item)
         return True
-    
-    # Add an item to the shopping cart by querying user for info
-    def get_info_to_add_item(self):
-        print("\nAdding item to cart")
-        while True:
-            try:
-                item_name = input("Enter item name: ")
-    
-                if item_name.strip() == "":
-                    print("No item name entered, aborting entry")
-                    return None
 
-                # Check if item already in cart
-                if self.is_incart(item_name):
-                    print("You already have that item in the cart. Use the modify function to change it.")
-                    return None
-
-                # Obtain price info
-                item_price = float(input("Enter item price: $"))
-    
-                if item_price <= 0.0:
-                    raise ValueError("Item price must be positive")
-    
-                item_quantity = int(input("Enter item quantity: "))
-    
-                if item_quantity <= 0:
-                    raise ValueError("Item quantity must be positive")
-    
-                # Valid inputs - create item object and store it
-                item = ItemToPurchase(item_name, item_price, item_quantity)
-                self.add_item(item)
-                print(f"{item_name} added to cart.")
-                return item
-    
-            except ValueError as error:
-                # Note: I realize any error forces re-entry of ALL values
-                # Production code would separate this to individual try/excepts
-                print(f"Invalid input: {error}")
-                print("Try again. Enter a blank item name to abort.")
-
-    # Delete an item from the shopping cart by name
+    # Remove item(s) from the shopping cart by name
     def remove_item(self, item_name: str) -> bool:
-        # Remove item(s) in the cart matching item_name
-        # This ignoring case and whitespace.
-        #
+        # Remove all items matching item_name.
+        # Comparison ignores case and surrounding whitespace.
+
         search_name = item_name.strip().lower()
         removed_items = []
         remaining_items = []
 
-        # Iterate through the cart
         for item in self.cart_items:
             if item.item_name.strip().lower() == search_name:
                 removed_items.append(item)
             else:
                 remaining_items.append(item)
-        
-        # Reset cart to non-matches
+
         self.cart_items = remaining_items
 
-        # Report empty cart 
         if not removed_items:
-            print(f"Item {item_name} not found in cart. Nothing removed.")
+            print("Item not found in cart. Nothing removed.")
             return False
 
-        # Warn if multiple items
         if len(removed_items) > 1:
-            print(f"Warning: Removed {len(removed_items)} matching items: {removed_items}.")
+            print(
+                f"Warning: Removed {len(removed_items)} "
+                f"matching items: {removed_items}."
+            )
 
-        # Report success to calling logic
         return True
-    
-    # Remove an item from the shopping cart by asking user name of item
-    def get_name_to_remove(self):
-        print("\nRemove Item")
-        # Get name from user
-        item_name = input("Enter item name to remove: ")
 
-        # Execute remove method
-        return self.remove_item(item_name)
-        
-    # Modify an existing item in the shopping cart
-    def modify_item(self, moditem):
-        #
-        # Input is an ItemToPurchase object with the desired new values
-        # If an item of the same name exists, it will remove the existing
-        # and add the new one.
-        # Note: This obviously assumes order does not matter in cart...
-        #
-        # This method assumes the calling method has validated user-input
-        # in production likely have a trust-but-verify logic
-        # so a rogue API couldn't do bad things
-        #
+    # Modify an existing ItemToPurchase object in the shopping cart
+    def modify_item(self, moditem: ItemToPurchase) -> bool:
         if not self.is_incart(moditem):
             print("Item not found in cart. Nothing modified.")
             return False
 
-        # Delete item currently with that name
+        # Remove the existing item(s)
         if not self.remove_item(moditem.item_name):
-            print("Error deleting item")
+            print("Error deleting item.")
             return False
 
-        # Add the update item
+        # Add the updated item
         self.cart_items.append(moditem)
 
-        # Note: The instructions did NOT indicate the order of items was important.
-        # This logic would be more complicated if the was required to be perserved.
         return True
 
-    def get_valid_quantity(self,maxval=100):
-        # Queries the user until they enter a valid integer quantity
-        # Returns an int between -1 and 100
-        while True:
-            try:
-                new_q = int(input("Enter new quantity: "))
-                if new_q < 0:
-                    return -1
-                if new_q < maxval:
-                    return new_q
-                # Value is too high, make them try again
-                print(f"The website can not handle that amount.  Enter less than {maxval}")
-            except:
-                # not an integer try again
-                print("Please try again with a valid integer.  Enter -1 to abort.")
-                    
-
-    # Get item information from the user and change its quantity
-    def change_item_quantity(self):
-        print("\nCHANGE ITEM QUANTITY")
-
-        item_name = input("Enter item name: ").strip()
-        quant_item = self.get_item_byname(item_name)
-        if not quant_item:
-            print(f"Item {item_name} not found in cart, nothing to change")
-            return False
-
-        # Get the new quantity (-1 == abort)
-        new_quantity = self.get_valid_quantity()
-
-        # Handle abort
-        if new_quantity < 0:
-            print("Aborting quantity update")
-            return False
-
-        # Treat zero case
-        if new_quantity == 0:
-            print("Quantity of zero requested, removing from cart")
-            return self.remove_item(item_name) 
-
-        # Create a new item with same attributes but new quantity
-        modified_item = ItemToPurchase(
-                item_name,
-                quant_item.item_price,
-                new_quantity
-            )
-
-        return self.modify_item(modified_item)
-
-
     # Return the total quantity of all items
-    def get_num_items_in_cart(self):
+    def get_num_items_in_cart(self) -> int:
         total_quantity = 0
 
         for item in self.cart_items:
@@ -270,7 +106,7 @@ class ShoppingCart:
         return total_quantity
 
     # Return the total cost of all items
-    def get_cost_of_cart(self):
+    def get_cost_of_cart(self) -> float:
         total_cost = 0.0
 
         for item in self.cart_items:
@@ -280,7 +116,10 @@ class ShoppingCart:
 
     # Print the contents and total cost of the cart
     def print_total(self):
-        print(f"\n{self.customer_name}'s Shopping Cart - {self.current_date}")
+        print(
+            f"\n{self.customer_name}'s Shopping Cart - "
+            f"{self.current_date}"
+        )
         print("****************************************")
 
         if len(self.cart_items) == 0:
@@ -296,7 +135,10 @@ class ShoppingCart:
 
     # Print descriptions of all items in the cart
     def print_descriptions(self):
-        print(f"\n{self.customer_name}'s Shopping Cart - {self.current_date}")
+        print(
+            f"\n{self.customer_name}'s Shopping Cart - "
+            f"{self.current_date}"
+        )
         print("****************************************")
         print("Item Descriptions")
 
@@ -306,6 +148,196 @@ class ShoppingCart:
 
         for item in self.cart_items:
             print(item.item_name)
+
+    # ============================================================
+    # UTILITY METHODS
+    # ============================================================
+
+    # Check if an item is in the cart
+    def is_incart(self, item):
+        # Input may be a string containing an item name
+        # or an ItemToPurchase object.
+
+        if isinstance(item, str):
+            item_name = item
+
+        elif isinstance(item, ItemToPurchase):
+            item_name = item.item_name
+
+        else:
+            print(
+                "Warning: is_incart() requires a string "
+                "or ItemToPurchase object."
+            )
+            return False
+
+        matches = []
+
+        for cart_item in self.cart_items:
+            if cart_item.item_name.lower() == item_name.lower():
+                matches.append(cart_item.item_name)
+
+        if len(matches) == 1:
+            return True
+
+        if len(matches) == 0:
+            return False
+
+        print(f"There were more than one match: {matches}")
+        return True
+
+    # Find an item by name
+    def get_item_byname(self, item):
+        # Input may be a string containing an item name
+        # or an ItemToPurchase object.
+
+        if isinstance(item, str):
+            item_name = item
+
+        elif isinstance(item, ItemToPurchase):
+            item_name = item.item_name
+
+        else:
+            print(
+                "Warning: get_item_byname() requires a string "
+                "or ItemToPurchase object."
+            )
+            return False
+
+        if not self.is_incart(item):
+            return False
+
+        for cart_item in self.cart_items:
+            if (
+                cart_item.item_name.strip().lower()
+                == item_name.strip().lower()
+            ):
+                return cart_item
+
+        # Should never reach here
+        print("Error finding item by name")
+        return False
+
+    # ============================================================
+    # USER INPUT / INTERFACE METHODS
+    # ============================================================
+
+    # Add an item to the shopping cart by querying user for info
+    def get_info_to_add_item(self):
+        print("\nAdding item to cart")
+
+        while True:
+            try:
+                item_name = input("Enter item name: ")
+
+                if item_name.strip() == "":
+                    print("No item name entered, aborting entry")
+                    return None
+
+                # Check if item already in cart
+                if self.is_incart(item_name):
+                    print(
+                        "You already have that item in the cart. "
+                        "Use the modify function to change it."
+                    )
+                    return None
+
+                item_price = float(input("Enter item price: $"))
+
+                if item_price <= 0.0:
+                    raise ValueError("Item price must be positive")
+
+                item_quantity = int(input("Enter item quantity: "))
+
+                if item_quantity <= 0:
+                    raise ValueError("Item quantity must be positive")
+
+                item = ItemToPurchase(
+                    item_name,
+                    item_price,
+                    item_quantity
+                )
+
+                self.add_item(item)
+
+                print(f"{item_name} added to cart.")
+                return item
+
+            except ValueError as error:
+                print(f"Invalid input: {error}")
+                print(
+                    "Try again. Enter a blank item name to abort."
+                )
+
+    # Remove an item from the shopping cart by asking user for name
+    def get_name_to_remove(self):
+        print("\nRemove Item")
+
+        item_name = input("Enter item name to remove: ")
+
+        return self.remove_item(item_name)
+
+    # Get a valid quantity from the user
+    def get_valid_quantity(self, maxval=100):
+        # Returns an int between 0 and maxval-1.
+        # Returns -1 if the user wants to abort.
+
+        while True:
+            try:
+                new_q = int(input("Enter new quantity: "))
+
+                if new_q < 0:
+                    return -1
+
+                if new_q < maxval:
+                    return new_q
+
+                print(
+                    f"The website cannot handle that amount. "
+                    f"Enter less than {maxval}"
+                )
+
+            except ValueError:
+                print(
+                    "Please try again with a valid integer. "
+                    "Enter -1 to abort."
+                )
+
+    # Get item information from the user and change its quantity
+    def change_item_quantity(self):
+        print("\nCHANGE ITEM QUANTITY")
+
+        item_name = input("Enter item name: ").strip()
+        quant_item = self.get_item_byname(item_name)
+
+        if not quant_item:
+            print(
+                f"Item {item_name} not found in cart, "
+                "nothing to change"
+            )
+            return False
+
+        # Get the new quantity (-1 == abort)
+        new_quantity = self.get_valid_quantity()
+
+        if new_quantity < 0:
+            print("Aborting quantity update")
+            return False
+
+        # Treat zero as a request to remove the item
+        if new_quantity == 0:
+            print("Quantity of zero requested, removing from cart")
+            return self.remove_item(item_name)
+
+        # Create a new item with the same attributes
+        # except for the new quantity.
+        modified_item = ItemToPurchase(
+            quant_item.item_name,
+            quant_item.item_price,
+            new_quantity
+        )
+
+        return self.modify_item(modified_item)
 
 # Main Retail Store class. 
 # At this point just has one shopping cart for one customer
@@ -318,7 +350,7 @@ class RetailStore:
     # Define a name validation method
     # This simply makes sure its not empty but in production code would check for repeats
     # and that is not fake like a Moe's Tavern customer
-    def validate_customer_name():
+    def validate_customer_name(self):
         while True:
             customer_name = input("Enter customer's name: ").strip()
             if customer_name:
@@ -377,7 +409,7 @@ class RetailStore:
         print(f"\nCustomer name: {self.cart.customer_name}")
         print(f"Order date: {self.cart.current_date}")
 
-    def print_menu_text(self):
+    def generate_menu_text(self):
         # Separates print statements from logic loop
         print("\nMENU")
         print("a - Add item to cart")
@@ -389,9 +421,9 @@ class RetailStore:
         return True
 
     # Display the shopping cart menu and process user selections
-    def display_menu(self):
+    def print_menu(self):
         while True:
-            self.print_menu_text()
+            self.generate_menu_text()
             choice = input("Choose an option: ").strip().lower()
     
             if choice == "q":
