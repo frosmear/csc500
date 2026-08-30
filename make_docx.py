@@ -257,47 +257,41 @@ class HomeworkPackager:
 
     def save(self):
         """Save the completed Word document."""
-
-        self.document.save(
-            self.output_file
-        )
-
-        print(
-            f"Created: {self.output_file.resolve()}"
-        )
+        self.document.save(self.output_file)
+        print(f"Created: {self.output_file.resolve()}"        )
 
 
     # ========================================================
     # GIT
     # ========================================================
 
-   def git_commit(self):
-    """Add the generated document and commit it."""
+    def git_commit(self):
+        """Add the generated document and commit it."""
 
-    if self.config.get("git_commit", "false").lower() != "true":
-        print("Git commit deactivated in configuration.")
-        return
+        if self.config.get("git_commit", "false").lower() != "true":
+            print("Git commit deactivated in configuration.")
+            return
 
-    commit_message = self.config.get(
-        "git_commit_message",
-        f"Package {self.assignment_title}"
-    )
-
-    try:
-        subprocess.run(
-            ["git", "add", str(self.output_file)],
-            check=True
+        commit_message = self.config.get(
+            "git_commit_message",
+            f"Package {self.assignment_title}"
         )
 
-        subprocess.run(
-            ["git", "commit", "-m", commit_message],
-            check=True
-        )
+        try:
+            subprocess.run(
+                ["git", "add", str(self.output_file)],
+                check=True
+            )
 
-        print(f"Git commit created: {commit_message}")
+            subprocess.run(
+                ["git", "commit", "-m", commit_message],
+                check=True
+            )
 
-    except subprocess.CalledProcessError as error:
-        print(f"Git operation failed: {error}")
+            print(f"Git commit created: {commit_message}")
+
+        except subprocess.CalledProcessError as error:
+            print(f"Git operation failed: {error}")
 
 
     # ========================================================
