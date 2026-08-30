@@ -8,16 +8,31 @@ import subprocess
 
 class HomeworkPackager:
 
+class HomeworkPackager:
+
     def __init__(self, config_file="make_docx.cfg"):
         self.config_file = Path(config_file)
         self.config = self.load_config()
+
         self.assignment_title = self.config["assignment_title"]
         self.student_name = self.config["student_name"]
-        self.pseudocode_file = self.config_path.parent / self.config["pseudocode_file"]
-        self.screenshot_directory = self.config_file.parent / self.config["screenshot_directory"]
-        self.output_file = self.config_file.parent / self.config["output_file"]
+
+        self.pseudocode_file = (
+            self.config_file.parent / self.config["pseudocode_file"]
+        )
+
+        self.screenshot_directory = (
+            self.config_file.parent / self.config["screenshot_directory"]
+        )
+
+        self.output_file = (
+            self.config_file.parent / self.config["output_file"]
+        )
+
         self.source_code_url = self.config["source_code_url"]
+
         self.document = Document()
+
 
 
     # ========================================================
