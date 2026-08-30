@@ -87,9 +87,20 @@ class ShoppingCart:
         # Should never reach here, helpful for debugging
         print("Error finding item by name")
         return False
-   
+
+    
+    def add_item(self, item: ItemToPurchase) -> bool:
+        # The instructions explicity stated I had to have a method called
+        # add_item(ItemToPurchase): Adds an object to the list.
+        #
+        # In the real world I suspect this would do some validation to an object
+        # and return a bool of success; in this simplistic example just appending to a list
+        #
+        self.cart_items.append(item)
+        return True
+    
     # Add an item to the shopping cart by querying user for info
-    def add_item(self):
+    def get_info_to_add_item(self):
         print("\nAdding item to cart")
         while True:
             try:
@@ -117,8 +128,7 @@ class ShoppingCart:
     
                 # Valid inputs - create item object and store it
                 item = ItemToPurchase(item_name, item_price, item_quantity)
-                self.cart_items.append(item)
-    
+                self.add_item(item)
                 print(f"{item_name} added to cart.")
                 return item
     
@@ -129,17 +139,34 @@ class ShoppingCart:
                 print("Try again. Enter a blank item name to abort.")
 
     # Delete an item from the shopping cart by name
-    def remove_item(self, item_name):
-        # Check to see if in cart
-        if not self.is_incart(item_name):
-            print("Item {item_name) not found in cart. Nothing removed.")      
+    def remove_item(self, item_name: str) -> bool:
+        # Remove item(s) in the cart matching item_name
+        # This ignoring case and whitespace.
+        #
+        search_name = item_name.strip().lower()
+        removed_items = []
+        remaining_items = []
+
+        # Iterate through the cart
+        for item in self.cart_items:
+            if item.item_name.strip().lower() == search_name:
+                removed_items.append(item)
+            else:
+                remaining_items.append(item)
+        
+        # Reset cart to non-matches
+        self.cart_items = remaining_items
+
+        # Report empty cart 
+        if not removed_items:
+            print(f"Item {item_name} not found in cart. Nothing removed.")
             return False
 
-        # Iterate through cart
-        for item in self.cart_items:
-            # case-insensitive and whitespace ignoring
-            if item.item_name.strip().lower() == item_name.strip().lower():
-                self.cart_items.remove(item)
+        # Warn if multiple items
+        if len(removed_items) > 1:
+            print(f"Warning: Removed {len(removed_items)} matching items: {removed_items}.")
+
+        # Report success to calling logic
         return True
     
     # Remove an item from the shopping cart by asking user name of item
