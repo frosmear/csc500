@@ -4,14 +4,38 @@ from docx.shared import Inches
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 
+
 # ============================================================
 # CONFIGURATION
 # ============================================================
 
-PSEUDOCODE_FILE = Path("m6/pseudo.md")
-SCREENSHOT_DIRECTORY = Path("m6")
-OUTPUT_FILE = Path("m6/module6_portfolio.docx")
-SOURCE_CODE_URL = "https://github.com/frosmear/csc500/blob/main/m6/module6.py"
+CONFIG_FILE = Path("make_docx.cfg")
+
+
+# ============================================================
+# CONFIGURATION LOADING
+# ============================================================
+
+def load_config(filename):
+    """Load simple key=value configuration file."""
+
+    config = {}
+
+    with filename.open("r", encoding="utf-8") as file:
+        for line in file:
+            line = line.strip()
+
+            # Ignore blank lines and comments
+            if not line or line.startswith("#"):
+                continue
+
+            if "=" not in line:
+                continue
+
+            key, value = line.split("=", 1)
+            config[key.strip()] = value.strip()
+
+    return config
 
 
 # ============================================================
@@ -22,14 +46,15 @@ def add_hyperlink(paragraph, text, url):
     """Add a clickable hyperlink to a Word paragraph."""
 
     part = paragraph.part
-    r_id = part.relate_to(
+
+    relationship_id = part.relate_to(
         url,
         "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink",
         is_external=True
     )
 
     hyperlink = OxmlElement("w:hyperlink")
-    hyperlink.set(qn("r:id"), r_id)
+    hyperlink.set(qn("r:id"), relationship_id)
 
     run = OxmlElement("w:r")
     run_properties = OxmlElement("w:rPr")
@@ -55,7 +80,7 @@ def add_hyperlink(paragraph, text, url):
 
 
 def add_markdown_as_text(document, markdown_file):
-    """Read the Markdown file and add its contents to the document."""
+    """Read simple Markdown and add it to the document."""
 
     with markdown_file.open("r", encoding="utf-8") as file:
         lines = file.readlines()
@@ -63,12 +88,11 @@ def add_markdown_as_text(document, markdown_file):
     for line in lines:
         line = line.rstrip()
 
-        # Preserve blank lines
         if not line:
             document.add_paragraph()
             continue
 
-        # Handle Markdown headings
+        # Markdown headings
         if line.startswith("### "):
             document.add_heading(line[4:], level=3)
 
@@ -78,99 +102,164 @@ def add_markdown_as_text(document, markdown_file):
         elif line.startswith("# "):
             document.add_heading(line[2:], level=1)
 
-        # Handle Markdown bullet points
+        # Bullet list
         elif line.startswith("- "):
             document.add_paragraph(
                 line[2:],
                 style="List Bullet"
             )
 
-        # Handle numbered Markdown lists
+        # Numbered list
         elif len(line) > 2 and line[0].isdigit() and ". " in line:
             document.add_paragraph(
                 line.split(". ", 1)[1],
                 style="List Number"
             )
 
+        # Normal paragraph
         else:
             document.add_paragraph(line)
 
 
 # ============================================================
-# CREATE DOCUMENT
+# MAIN
 # ============================================================
 
-document = Document()
+def main():
 
-# ------------------------------------------------------------
-# PSEUDOCODE
-# ------------------------------------------------------------
+    # --------------------------------------------------------
+    # Load configuration
+    # --------------------------------------------------------
 
-document.add_heading("Pseudocode", level=1)
+    if not CONFIG_FILE.exists():
+        print(f"ERROR: Configuration file not found: {CONFIG_FILE}")
+        return
 
-if PSEUDOCODE_FILE.exists():
-    add_markdown_as_text(document, PSEUDOCODE_FILE)
-else:
+    config = load_config(CONFIG_FILE)
+
+    required_settings = [
+        "assignment_title",
+        "student_name",
+        "pseudocode_file",
+        "screenshot_directory",
+        "output_file",
+        "source_code_url"
+    ]
+
+    for setting in required_settings:
+        if setting not in config:
+            print(f"ERROR: Missing configuration setting: {setting}")
+            return
+
+    assignment_title = config["assignment_title"]
+    student_name = config["student_name"]
+
+    pseudocode_file = Path(config["pseudocode_file"])
+    screenshot_directory = Path(config["screenshot_directory"])
+    output_file = Path(config["output_file"])
+
+    source_code_url = config["source_code_url"]
+
+
+    # --------------------------------------------------------
+    # Create document
+    # --------------------------------------------------------
+
+    document = Document()
+
+
+    # --------------------------------------------------------
+    # Title
+    # --------------------------------------------------------
+
+    document.add_heading(assignment_title, level=1)
+
     document.add_paragraph(
-        f"Pseudocode file not found: {PSEUDOCODE_FILE}"
+        f"Student: {student_name}"
     )
 
 
-# ------------------------------------------------------------
-# SCREENSHOTS
-# ------------------------------------------------------------
+    # --------------------------------------------------------
+    # PSEUDOCODE
+    # --------------------------------------------------------
 
-document.add_heading("Screenshots", level=1)
+    document.add_heading("Pseudocode", level=1)
 
-if SCREENSHOT_DIRECTORY.exists():
+    if pseudocode_file.exists():
+        add_markdown_as_text(
+            document,
+            pseudocode_file
+        )
+    else:
+        document.add_paragraph(
+            f"Pseudocode file not found: {pseudocode_file}"
+        )
 
-    screenshots = sorted(
-        SCREENSHOT_DIRECTORY.glob("*.png"),
-        key=lambda path: path.name.lower()
-    )
 
-    if screenshots:
-        for screenshot in screenshots:
-            document.add_paragraph(screenshot.name)
+    # --------------------------------------------------------
+    # SCREENSHOTS
+    # --------------------------------------------------------
 
-            paragraph = document.add_paragraph()
-            run = paragraph.add_run()
+    document.add_heading("Screenshots", level=1)
 
-            run.add_picture(
-                str(screenshot),
-                width=Inches(6.0)
+    if screenshot_directory.exists():
+
+        screenshots = sorted(
+            screenshot_directory.glob("*.png"),
+            key=lambda path: path.name.lower()
+        )
+
+        if screenshots:
+
+            for screenshot in screenshots:
+
+                document.add_paragraph(
+                    screenshot.name
+                )
+
+                paragraph = document.add_paragraph()
+                run = paragraph.add_run()
+
+                run.add_picture(
+                    str(screenshot),
+                    width=Inches(6.0)
+                )
+
+        else:
+            document.add_paragraph(
+                "No PNG screenshots were found."
             )
 
     else:
         document.add_paragraph(
-            "No PNG screenshots were found."
+            f"Screenshot directory not found: "
+            f"{screenshot_directory}"
         )
 
-else:
-    document.add_paragraph(
-        f"Screenshot directory not found: {SCREENSHOT_DIRECTORY}"
+
+    # --------------------------------------------------------
+    # SOURCE CODE
+    # --------------------------------------------------------
+
+    document.add_heading("Source Code", level=1)
+
+    paragraph = document.add_paragraph()
+
+    add_hyperlink(
+        paragraph,
+        "View Source Code",
+        source_code_url
     )
 
 
-# ------------------------------------------------------------
-# SOURCE CODE
-# ------------------------------------------------------------
+    # --------------------------------------------------------
+    # Save document
+    # --------------------------------------------------------
 
-document.add_heading("Source Code", level=1)
+    document.save(output_file)
 
-paragraph = document.add_paragraph()
-
-add_hyperlink(
-    paragraph,
-    "View Source Code",
-    SOURCE_CODE_URL
-)
+    print(f"Created: {output_file.resolve()}")
 
 
-# ============================================================
-# SAVE DOCUMENT
-# ============================================================
-
-document.save(OUTPUT_FILE)
-
-print(f"Created: {OUTPUT_FILE.resolve()}")
+if __name__ == "__main__":
+    main()
