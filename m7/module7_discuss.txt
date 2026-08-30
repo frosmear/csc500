@@ -1,1 +1,49 @@
-the puppy that lost its way
+When deciding whether to use a built-in function or write my own, I would probably look at three things: whether Python already does what I need, whether I need specialized logic, and whether I am going to use that logic more than once.
+
+The first one is pretty obvious. If Python already has a function that does the job, there usually isn't much reason to reinvent it. For example, if I need the length of a list, `len()` already exists and does exactly what I need. Nerds on the internet would do it better than I could.
+
+The second consideration would be whether I need some kind of specialized logic. A built-in function can only do what it was designed to do. If I have a specific problem that requires several steps or decisions, a user-defined function makes more sense because I can put that logic in one place.
+
+The third would be whether I am going to use the same logic repeatedly. If I find myself copying and pasting the same group of statements throughout a program, that screams turn it into a function. It makes the program easier to read and also means I only have to change the logic in one place if (uh when) something needs to be updated.
+
+Rather that continue the movie project theme, I'm going to use the first movie I put in the database in 2011. I love and my wife (like most women) hates *Billy Madison*, so I am giving that movie a shout-out for this week's assignment. It gives me an excuse to bring up the famous book report on "The Puppy That Lost Its Way." 
+
+For a completely unnecessary but entertaining example, I could write a function to search for a lost dog:
+
+```python
+def search_for_lost_dog(dog_name: str, hours: int) -> bool:
+    """Search for a lost dog for a specified number of hours."""
+
+    if hours > 1:
+        print(f"Still searching for {dog_name}.")
+        return True
+    else:
+        print(f"Keep looking for that f***ing dog {dog_name}! You got a responsibility!")
+        return False
+```
+
+The function declaration is:
+
+```python
+def search_for_lost_dog
+```
+
+The parameter types are:
+
+```python
+dog_name: str
+hours: int
+```
+
+And the return type is:
+
+```python
+-> bool
+```
+
+The logic here is obviously not a serious lost-dog search algorithm, but it demonstrates why a user-defined function can be useful. I can call the same function with different dog names and different amounts of time without rewriting the entire decision process each time. Or set a timer for when the teacher gives up and sends me out to play dodgeball.
+
+The bigger point is that functions let us take a piece of logic and give it a name. Built-in functions are great when Python already provides the functionality we need. User-defined functions become more useful when the problem is specific to our program, when the logic has multiple steps, or when we need to reuse that logic. The goal isn't to write our own version of everything. It is to know when the existing tools are enough and when our program needs something more specialized.
+
+In closing, the puppy was a dog, but the industry was a revolution. CSU Football rules!
+
