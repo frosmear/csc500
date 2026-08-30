@@ -48,6 +48,9 @@ class ShoppingCart:
 
     # Add an ItemToPurchase object to the shopping cart
     def add_item(self, item: ItemToPurchase) -> bool:
+        if self.is_incart(item.item_name):
+            print("Item is a duplicate, aborting.")
+            return False
         self.cart_items.append(item)
         return True
 
