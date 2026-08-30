@@ -188,22 +188,18 @@ class HomeworkPackager:
                 width=Inches(6.0)
             )
 
-
     def add_source_code(self):
         """Add a hyperlink to the source code."""
-
-        self.document.add_heading(
-            "Source Code",
-            level=1
-        )
-
+        self.document.add_heading("Source Code", level=1)
         paragraph = self.document.add_paragraph()
-
         self.add_hyperlink(
             paragraph,
-            "View Source Code",
+            self.source_code_url,
             self.source_code_url
         )
+    
+
+  
 
 
     # ========================================================
