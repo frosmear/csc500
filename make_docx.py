@@ -11,7 +11,7 @@ from docx.oxml.ns import qn
 PSEUDOCODE_FILE = Path("m6/pseudo.md")
 SCREENSHOT_DIRECTORY = Path("m6")
 OUTPUT_FILE = Path("m6/module6_portfolio.docx")
-SOURCE_CODE_URL = "https://github.com/yourusername/yourrepository"
+SOURCE_CODE_URL = "https://github.com/frosmear/csc500/blob/main/m6/module6.py"
 
 
 # ============================================================
