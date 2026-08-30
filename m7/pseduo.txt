@@ -1,125 +1,23 @@
-CSC500 Module 6 Portfolio Milestone
-Pseudocode
-ItemToPurchase Class
+Set up dictionaries containing LUT data
+Avoid temptation to do this with JSON
+  Create a dictionary containing each course number and its room number.
+  Create a second dictionary containing each course number and its instructor.
+  Create a third dictionary containing each course number and its meeting time.
 
-Initialize ItemToPurchase
+Ask the user to enter a course number.
 
-Set item name to the provided name.
-Set item price to the provided price.
-Set item quantity to the provided quantity.
-If no values are provided, use "none", 0.0, and 0.
+Remove unnecessary spaces from the beginning and end of the input.
+Convert the course number to uppercase so entries such as csc101 are easier to handle.
 
-Print Item Cost
+Check whether the course number exists in each dictionary.
 
-Multiply the item price by the item quantity.
-Display the item name, quantity, price, and total cost.
-ShoppingCart Class
+If the course does not exist:
+    Display a friendly error message.
+    End the program.
 
-Initialize ShoppingCart
+If the course exists:
+    Retrieve the room number using the course number.
+    Retrieve the instructor using the course number.
+    Retrieve the meeting time using the course number.
 
-Set the customer name.
-Set the current date.
-Create an empty list called cart_items.
-
-Add Item
-
-Receive an ItemToPurchase object.
-Add the object to cart_items.
-
-Remove Item
-
-Search cart_items for an item with the requested name.
-If the item is found, remove it.
-If the item is not found, display "Item not found in cart. Nothing removed."
-
-Modify Item
-
-Search cart_items for an item with the requested name.
-If the item is found, update its price and quantity.
-If the item is not found, display an appropriate message.
-
-Get Number of Items
-
-Start a quantity counter at zero.
-Loop through every item in cart_items.
-Add each item's quantity to the counter.
-Return the total quantity.
-
-Get Cost of Cart
-
-Start a total cost counter at zero.
-Loop through every item in cart_items.
-Multiply each item's price by its quantity.
-Add each item total to the cart total.
-Return the total cost.
-
-Print Total
-
-Display the customer's name and current date.
-Check whether the cart is empty.
-If the cart is empty, display "SHOPPING CART IS EMPTY."
-Otherwise, display each item and its cost.
-Display the total number of items and total cost.
-
-Print Descriptions
-
-Display the customer's name and current date.
-Check whether the cart is empty.
-If the cart is empty, display "SHOPPING CART IS EMPTY."
-Otherwise, loop through the cart and display each item's name.
-Menu Loop
-
-Start Program
-
-Ask the user for the customer's name.
-Ask the user for the current date.
-Create a ShoppingCart object using those values.
-Display the menu.
-
-Display Menu
-
-Display options for:
-Add item
-Remove item
-Change item quantity
-Output descriptions
-Output shopping cart
-Quit
-Ask the user to select an option.
-
-If the user selects Add
-
-Ask for the item name.
-Ask for the item price.
-Ask for the item quantity.
-Create an ItemToPurchase object.
-Add the object to the shopping cart.
-
-If the user selects Remove
-
-Ask for the item name.
-Search for and remove the item.
-
-If the user selects Change Quantity
-
-Ask for the item name.
-Ask for the new quantity.
-Modify the matching item.
-
-If the user selects Output Descriptions
-
-Display the descriptions of the items in the cart.
-
-If the user selects Output Shopping Cart
-
-Display all items, quantities, individual costs, and the total cost.
-
-If the user selects Quit
-
-End the menu loop.
-End the program.
-
-If the user enters an invalid option
-
-Display an invalid-option message.
-Display the menu again.
+Display the course number, room number, instructor, and meeting time.
