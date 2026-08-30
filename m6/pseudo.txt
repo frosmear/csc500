@@ -1,8 +1,3 @@
-CSC500 Module 6 Portfolio Milestone
-Pseudocode
-
-
-
 Create a ItemToPurchase Class
     Initialize method
         Set item name to the provided name.
@@ -66,7 +61,7 @@ Create a RetailStore Class
 
     Define a get customer info method
         Ask the user for the customer's name.
-        Ask the user for the date they want to buy, default to now
+        Ask the user order date, default to now
         Validate inputs and update cart object
 
     Define a Display Menu method
@@ -83,7 +78,7 @@ Create a RetailStore Class
         Until they pick a valid option:
             Ask the user to select an option.
             Exit loop if quit is selected
-            If the option is valid execute the appropriate method on ShoppingCart
+            If valid execute the appropriate method on ShoppingCart
             Else display an invalid-option message.
             Display the menu again
 
