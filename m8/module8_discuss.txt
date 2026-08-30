@@ -1,29 +1,37 @@
-Loops are useful when a program needs to repeat an action on multiple objects with little to no variation. 
-The essential parts of a loop are the starting value or initialization, a condition that determines whether the loop should continue, 
-and some form of change or increment that eventually allows the loop to stop. The exact structure depends on whether the loop is 
-count-controlled or condition-controlled.
+The easiest way for me to understand the difference between a class and an instance is to think of a class as the blueprint and the instance as the thing that gets built from it. The class defines what something is supposed to have and do, while an instance is an actual object created from that definition.
 
-An example of a count-controlled (definite) loop would be counting the number of files in a folder or iterating through a list of new videos 
-that need to be added to my collection. In this situation the program  has a known group of items to process, so a for loop works well. 
-The loop can go through each file or video, run my ffmpeg script to preconvert them for my kids tablets and then stop wasting electricty
-when there are no more.
+For example, if I made a `Song` class, the class could define a title, a list of subjects, and a function for singing the song. I could then create different instances of that class for different songs.  In the real world hackers can and will distort them for good, bad, and ugly outcomes.
 
-An indefinite (condition-controlled) loop is useful when the number of repetitions is not known ahead of time. I have used this type of loop when 
-dealing with user inputs, like the youTube downloader. The program can continue asking for input until the user provides something valid, which is 
-especially useful for handling the tricks Google does to thwart that (and force my kids to watch ads).  A while loop is a good choice because the 
-program does not know how many attempts will be necessary.
+This reminds me of The Lonely Island's "Jack Sparrow" song, where Michael Bolton keeps hijacking the song to sing about completely different movies. For this example, the instances could be the different movies Bolton decides the song is about.
 
-Pseudocode for validating user input could look like this:
+```python 
+class Song:
+    def __init__(self, title, movies):
+        self.title = title
+        self.movies = movies
+        self.__goal = "Prevent Bolton from changing the song"
 
-WHILE True
-    Parse the new URL
-    IF the URL downloads
-        Save the video locally
-        Parse metadata, add to my database
-    ELSE
-        Note in the log it failed
-        Continue to next item
-    Sleep 10 seconds waiting for a new URL
+    def sing(self):
+        print(f"Singing {self.title}")
+        for movie in self.movies:
+            print(f"Bolton is singing about {movie}")
 
-The loop is controlled by a condition rather than a predetermined number of repetitions. Once the user enters valid information, the condition changes 
-and the loop does something.  In this case it's infinite (or until power cycled) but the sleep avoids burning CPU.
+
+# Create an instance of the Song class
+jack_sparrow = Song(
+    "Jack Sparrow",
+    ["Pirates of the Caribbean", "Forrest Gump", "Erin Brockovich", "Scarface"]
+)
+
+jack_sparrow.sing()
+```
+
+In this example, `Song` is the class and `jack_sparrow` is an instance of that class. The class is the blueprint, while `jack_sparrow` is the actual object created from it.
+
+The `__goal` attribute is what I would consider a hidden attribute. In Python, putting two underscores at the beginning of an attribute name causes Python to name-mangle it so that code outside the class cannot access it using the normal attribute name. It is not absolute security, but it is a way of indicating that the attribute is intended to be private to the class.
+
+In this completely necessary example, the goal is to prevent Bolton from changing the song. Unfortunately, given the source material, I am not sure even encapsulation is going to stop him. 
+
+For me, the useful part of OOP is that the class lets me define the structure and behavior once and then create multiple instances from it. Each instance can have its own data while still following the same blueprint. The hidden attribute gives the class a way to keep certain internal information from being casually changed by the code using the object.
+
+Unlike the Billy Madison example I can't end with a quote of my favorite line from the video; the TBS version would be: "This whole town is a kitty just waiting to get cuddled!”
