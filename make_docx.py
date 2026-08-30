@@ -8,8 +8,6 @@ import subprocess
 
 class HomeworkPackager:
 
-class HomeworkPackager:
-
     def __init__(self, config_file="make_docx.cfg"):
         self.config_file = Path(config_file)
         self.config = self.load_config()
