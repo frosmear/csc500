@@ -1,6 +1,6 @@
 from pathlib import Path
 from docx import Document
-from docx.shared import Inches
+from docx.shared import Inches, Pt
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 import subprocess
@@ -77,13 +77,15 @@ class HomeworkPackager:
         self.document.add_paragraph(
             f"Student: {self.student_name}"
         )
+
+
     def add_pseudocode(self):
         """Add pseudocode from the configured Markdown file."""
     
-        self.document.add_paragraph(
-            "Pseudocode",
-            style="Heading 1"
-        )
+        paragraph = self.document.add_paragraph()
+        run = paragraph.add_run("Pseudocode")
+        run.bold = True
+        run.font.size = Pt(16)
     
         if not self.pseudocode_file.exists():
             self.document.add_paragraph(
@@ -92,7 +94,6 @@ class HomeworkPackager:
             return
     
         with self.pseudocode_file.open("r", encoding="utf-8") as file:
-    
             for line in file:
                 line = line.rstrip()
     
@@ -138,52 +139,50 @@ class HomeworkPackager:
                     self.document.add_paragraph(line)
     
     
-
- 
-
     def add_screenshots(self):
         """Add all PNG screenshots from the configured directory."""
-
-        self.document.add_paragraph("Screenshots",style="Heading 1")
-
+    
+        paragraph = self.document.add_paragraph()
+        run = paragraph.add_run("Screenshots")
+        run.bold = True
+        run.font.size = Pt(16)
+    
         if not self.screenshot_directory.exists():
             self.document.add_paragraph(
                 f"Screenshot directory not found: "
                 f"{self.screenshot_directory}"
             )
             return
-
+    
         screenshots = sorted(
             self.screenshot_directory.glob("*.png"),
             key=lambda path: path.name.lower()
         )
-
+    
         if not screenshots:
             self.document.add_paragraph(
                 "No PNG screenshots were found."
             )
             return
-
+    
         for screenshot in screenshots:
-
-            self.document.add_paragraph(
-                screenshot.name
-            )
-
+            self.document.add_paragraph(screenshot.name)
+    
             paragraph = self.document.add_paragraph()
             run = paragraph.add_run()
-
+    
             run.add_picture(
                 str(screenshot),
                 width=Inches(6.0)
             )
-
-    def add_source_code(self):
+    
+      def add_source_code(self):
         """Add a hyperlink to the source code."""
-        self.document.add_paragraph(
-            "Source Code",
-            style="Heading 1"
-        )
+    
+        paragraph = self.document.add_paragraph()
+        run = paragraph.add_run("Source Code")
+        run.bold = True
+        run.font.size = Pt(16)
     
         paragraph = self.document.add_paragraph()
     
@@ -192,10 +191,6 @@ class HomeworkPackager:
             self.source_code_url,
             self.source_code_url
         )
-
-    
-
-  
 
 
     # ========================================================
