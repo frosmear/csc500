@@ -23,12 +23,16 @@ class ItemToPurchase:
         print(f"{self.item_name} {self.item_quantity} @ ${self.item_price:.2f} = ${item_total:.2f}")
 
 class ShoppingCart:
-    def __init__(self, customer_name="none", order_date=None):
+    def __init__(self, customer_name="none", order_date=None, current_date="Janaury 1, 2020"):
         self.customer_name = customer_name
         if order_date is None:
             order_date = datetime.now()
         self.order_date = order_date
         self.cart_items = []
+        # The instructions explicity said I had to have a string named current_date
+        # and default to "January 1, 2020".  It makes no sense to treat as string and
+        # not a datetime so created order_date to do useful things 
+        self.current_date = current_date
 
     # Utility Function to check if item in cart
     def is_incart(self, item):
@@ -195,13 +199,15 @@ class ShoppingCart:
             return False
 
         # Delete item currently with that name
-        if not self.delete_item(moditem.item_name):
+        if not self.remove_item(moditem.item_name):
+            print("Error deleting item")
+            return False
 
         # Add the update item
         self.cart_items.append(moditem)
 
         # Note: The instructions did NOT indicate the order of items was important.
-        #  This logic would be more complicated if the was required to be perserved.
+        # This logic would be more complicated if the was required to be perserved.
         return True
 
     def get_valid_quantity(self,maxval=100):
@@ -226,7 +232,7 @@ class ShoppingCart:
         print("\nCHANGE ITEM QUANTITY")
 
         item_name = input("Enter item name: ").strip()
-        quant_item = self.get_item_byname(item_name):
+        quant_item = self.get_item_byname(item_name)
         if not quant_item:
             print(f"Item {item_name} not found in cart, nothing to change")
             return False
@@ -242,17 +248,17 @@ class ShoppingCart:
         # Treat zero case
         if new_quantity == 0:
             print("Quantity of zero requested, removing from cart")
-            return self. 
-            modified_item = ItemToPurchase(
+            return self.remove_item(item_name) 
+
+        # Create a new item with same attributes but new quantity
+        modified_item = ItemToPurchase(
                 item_name,
-                0.0,
+                quant_item.item_price,
                 new_quantity
             )
 
-            self.modify_item(modified_item)
+        return self.modify_item(modified_item)
 
-        except ValueError:
-            print("Invalid quantity.")
 
     # Return the total quantity of all items
     def get_num_items_in_cart(self):
