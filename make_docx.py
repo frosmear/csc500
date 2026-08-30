@@ -69,70 +69,61 @@ class HomeworkPackager:
     def add_title(self):
         """Add assignment title and student name."""
 
-        self.document.add_heading(
-            self.assignment_title,
-            level=1
+        self.document.add_paragraph(
+        self.assignment_title,
+        style="Title"
         )
 
         self.document.add_paragraph(
             f"Student: {self.student_name}"
         )
-
-
     def add_pseudocode(self):
         """Add pseudocode from the configured Markdown file."""
-
-        self.document.add_heading(
+    
+        self.document.add_paragraph(
             "Pseudocode",
-            level=1
+            style="Heading 1"
         )
-
+    
         if not self.pseudocode_file.exists():
             self.document.add_paragraph(
-                f"Pseudocode file not found: "
-                f"{self.pseudocode_file}"
+                f"Pseudocode file not found: {self.pseudocode_file}"
             )
             return
-
-        with self.pseudocode_file.open(
-            "r",
-            encoding="utf-8"
-        ) as file:
-
+    
+        with self.pseudocode_file.open("r", encoding="utf-8") as file:
+    
             for line in file:
                 line = line.rstrip()
-
+    
                 if not line:
                     self.document.add_paragraph()
                     continue
-
-                # Markdown headings
+    
                 if line.startswith("### "):
-                    self.document.add_heading(
+                    self.document.add_paragraph(
                         line[4:],
-                        level=3
+                        style="Heading 3"
                     )
-
+    
                 elif line.startswith("## "):
-                    self.document.add_heading(
+                    self.document.add_paragraph(
                         line[3:],
-                        level=2
+                        style="Heading 2"
                     )
-
+    
                 elif line.startswith("# "):
-                    self.document.add_heading(
+                    self.document.add_paragraph(
                         line[2:],
-                        level=1
+                        style="Heading 1"
                     )
-
-                # Bullet list
+    
                 elif line.startswith("- "):
                     self.document.add_paragraph(
                         line[2:],
                         style="List Bullet"
                     )
-
-                # Numbered list
+    
                 elif (
                     len(line) > 2
                     and line[0].isdigit()
@@ -142,19 +133,18 @@ class HomeworkPackager:
                         line.split(". ", 1)[1],
                         style="List Number"
                     )
-
-                # Normal paragraph
+    
                 else:
                     self.document.add_paragraph(line)
+    
+    
 
+ 
 
     def add_screenshots(self):
         """Add all PNG screenshots from the configured directory."""
 
-        self.document.add_heading(
-            "Screenshots",
-            level=1
-        )
+        self.document.add_paragraph("Screenshots",style="Heading 1")
 
         if not self.screenshot_directory.exists():
             self.document.add_paragraph(
@@ -190,13 +180,19 @@ class HomeworkPackager:
 
     def add_source_code(self):
         """Add a hyperlink to the source code."""
-        self.document.add_heading("Source Code", level=1)
+        self.document.add_paragraph(
+            "Source Code",
+            style="Heading 1"
+        )
+    
         paragraph = self.document.add_paragraph()
+    
         self.add_hyperlink(
             paragraph,
             self.source_code_url,
             self.source_code_url
         )
+
     
 
   
