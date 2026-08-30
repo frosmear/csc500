@@ -473,5 +473,5 @@ def main():
     store.get_customer_info()
     store.display_menu()
 
-if name == "main":
+if __name__ == "__main__":
     main()

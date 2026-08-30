@@ -1,6 +1,37 @@
 CSC500 Module 6 Portfolio Milestone
 Pseudocode
 
+
+
+======================================================================
+ERROR: test_remove_multiple_matching_items (__main__.TestShoppingCart)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/darf/csc500/m6/testcart.py", line 14, in setUp
+    self.apple = ItemToPurchase("Apple", 1.50, 3)
+TypeError: ItemToPurchase() takes no arguments
+
+======================================================================
+ERROR: test_remove_multiple_matching_items (__main__.TestShoppingCart)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/darf/csc500/m6/testcart.py", line 14, in setUp
+    self.apple = ItemToPurchase("Apple", 1.50, 3)
+TypeError: ItemToPurchase() takes no arguments
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Create a ItemToPurchase Class
     Initialize method
         Set item name to the provided name.
