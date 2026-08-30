@@ -3,122 +3,324 @@ from docx import Document
 from docx.shared import Inches
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
+import subprocess
 
 
-# ============================================================
-# CONFIGURATION
-# ============================================================
+class HomeworkPackager:
 
-CONFIG_FILE = Path("make_docx.cfg")
+    def __init__(self, config_file="make_docx.cfg"):
+        self.config_file = Path(config_file)
+        self.config = self.load_config()
 
+        self.assignment_title = self.config["assignment_title"]
+        self.student_name = self.config["student_name"]
 
-# ============================================================
-# CONFIGURATION LOADING
-# ============================================================
+        self.pseudocode_file = Path(
+            self.config["pseudocode_file"]
+        )
 
-def load_config(filename):
-    """Load simple key=value configuration file."""
+        self.screenshot_directory = Path(
+            self.config["screenshot_directory"]
+        )
 
-    config = {}
+        self.output_file = Path(
+            self.config["output_file"]
+        )
 
-    with filename.open("r", encoding="utf-8") as file:
-        for line in file:
-            line = line.strip()
+        self.source_code_url = self.config["source_code_url"]
 
-            # Ignore blank lines and comments
-            if not line or line.startswith("#"):
-                continue
-
-            if "=" not in line:
-                continue
-
-            key, value = line.split("=", 1)
-            config[key.strip()] = value.strip()
-
-    return config
+        self.document = Document()
 
 
-# ============================================================
-# HELPER FUNCTIONS
-# ============================================================
+    # ========================================================
+    # CONFIGURATION
+    # ========================================================
 
-def add_hyperlink(paragraph, text, url):
-    """Add a clickable hyperlink to a Word paragraph."""
+    def load_config(self):
+        """Load settings from the configuration file."""
 
-    part = paragraph.part
+        config = {}
 
-    relationship_id = part.relate_to(
-        url,
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink",
-        is_external=True
-    )
+        with self.config_file.open(
+            "r",
+            encoding="utf-8"
+        ) as file:
 
-    hyperlink = OxmlElement("w:hyperlink")
-    hyperlink.set(qn("r:id"), relationship_id)
+            for line in file:
+                line = line.strip()
 
-    run = OxmlElement("w:r")
-    run_properties = OxmlElement("w:rPr")
+                if not line or line.startswith("#"):
+                    continue
 
-    # Blue text
-    color = OxmlElement("w:color")
-    color.set(qn("w:val"), "0563C1")
-    run_properties.append(color)
+                if "=" not in line:
+                    continue
 
-    # Underline
-    underline = OxmlElement("w:u")
-    underline.set(qn("w:val"), "single")
-    run_properties.append(underline)
+                key, value = line.split("=", 1)
 
-    run.append(run_properties)
+                config[key.strip()] = value.strip()
 
-    text_element = OxmlElement("w:t")
-    text_element.text = text
-    run.append(text_element)
-
-    hyperlink.append(run)
-    paragraph._p.append(hyperlink)
+        return config
 
 
-def add_markdown_as_text(document, markdown_file):
-    """Read simple Markdown and add it to the document."""
+    # ========================================================
+    # DOCUMENT CONTENT
+    # ========================================================
 
-    with markdown_file.open("r", encoding="utf-8") as file:
-        lines = file.readlines()
+    def add_title(self):
+        """Add assignment title and student name."""
 
-    for line in lines:
-        line = line.rstrip()
+        self.document.add_heading(
+            self.assignment_title,
+            level=1
+        )
 
-        if not line:
-            document.add_paragraph()
-            continue
+        self.document.add_paragraph(
+            f"Student: {self.student_name}"
+        )
 
-        # Markdown headings
-        if line.startswith("### "):
-            document.add_heading(line[4:], level=3)
 
-        elif line.startswith("## "):
-            document.add_heading(line[3:], level=2)
+    def add_pseudocode(self):
+        """Add pseudocode from the configured Markdown file."""
 
-        elif line.startswith("# "):
-            document.add_heading(line[2:], level=1)
+        self.document.add_heading(
+            "Pseudocode",
+            level=1
+        )
 
-        # Bullet list
-        elif line.startswith("- "):
-            document.add_paragraph(
-                line[2:],
-                style="List Bullet"
+        if not self.pseudocode_file.exists():
+            self.document.add_paragraph(
+                f"Pseudocode file not found: "
+                f"{self.pseudocode_file}"
+            )
+            return
+
+        with self.pseudocode_file.open(
+            "r",
+            encoding="utf-8"
+        ) as file:
+
+            for line in file:
+                line = line.rstrip()
+
+                if not line:
+                    self.document.add_paragraph()
+                    continue
+
+                # Markdown headings
+                if line.startswith("### "):
+                    self.document.add_heading(
+                        line[4:],
+                        level=3
+                    )
+
+                elif line.startswith("## "):
+                    self.document.add_heading(
+                        line[3:],
+                        level=2
+                    )
+
+                elif line.startswith("# "):
+                    self.document.add_heading(
+                        line[2:],
+                        level=1
+                    )
+
+                # Bullet list
+                elif line.startswith("- "):
+                    self.document.add_paragraph(
+                        line[2:],
+                        style="List Bullet"
+                    )
+
+                # Numbered list
+                elif (
+                    len(line) > 2
+                    and line[0].isdigit()
+                    and ". " in line
+                ):
+                    self.document.add_paragraph(
+                        line.split(". ", 1)[1],
+                        style="List Number"
+                    )
+
+                # Normal paragraph
+                else:
+                    self.document.add_paragraph(line)
+
+
+    def add_screenshots(self):
+        """Add all PNG screenshots from the configured directory."""
+
+        self.document.add_heading(
+            "Screenshots",
+            level=1
+        )
+
+        if not self.screenshot_directory.exists():
+            self.document.add_paragraph(
+                f"Screenshot directory not found: "
+                f"{self.screenshot_directory}"
+            )
+            return
+
+        screenshots = sorted(
+            self.screenshot_directory.glob("*.png"),
+            key=lambda path: path.name.lower()
+        )
+
+        if not screenshots:
+            self.document.add_paragraph(
+                "No PNG screenshots were found."
+            )
+            return
+
+        for screenshot in screenshots:
+
+            self.document.add_paragraph(
+                screenshot.name
             )
 
-        # Numbered list
-        elif len(line) > 2 and line[0].isdigit() and ". " in line:
-            document.add_paragraph(
-                line.split(". ", 1)[1],
-                style="List Number"
+            paragraph = self.document.add_paragraph()
+            run = paragraph.add_run()
+
+            run.add_picture(
+                str(screenshot),
+                width=Inches(6.0)
             )
 
-        # Normal paragraph
-        else:
-            document.add_paragraph(line)
+
+    def add_source_code(self):
+        """Add a hyperlink to the source code."""
+
+        self.document.add_heading(
+            "Source Code",
+            level=1
+        )
+
+        paragraph = self.document.add_paragraph()
+
+        self.add_hyperlink(
+            paragraph,
+            "View Source Code",
+            self.source_code_url
+        )
+
+
+    # ========================================================
+    # WORD / DOCX FUNCTIONS
+    # ========================================================
+
+    def add_hyperlink(self, paragraph, text, url):
+        """Add a clickable hyperlink to a paragraph."""
+
+        relationship_id = paragraph.part.relate_to(
+            url,
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink",
+            is_external=True
+        )
+
+        hyperlink = OxmlElement("w:hyperlink")
+        hyperlink.set(
+            qn("r:id"),
+            relationship_id
+        )
+
+        run = OxmlElement("w:r")
+        run_properties = OxmlElement("w:rPr")
+
+        color = OxmlElement("w:color")
+        color.set(
+            qn("w:val"),
+            "0563C1"
+        )
+
+        run_properties.append(color)
+
+        underline = OxmlElement("w:u")
+        underline.set(
+            qn("w:val"),
+            "single"
+        )
+
+        run_properties.append(underline)
+
+        run.append(run_properties)
+
+        text_element = OxmlElement("w:t")
+        text_element.text = text
+
+        run.append(text_element)
+        hyperlink.append(run)
+
+        paragraph._p.append(hyperlink)
+
+
+    def save(self):
+        """Save the completed Word document."""
+
+        self.document.save(
+            self.output_file
+        )
+
+        print(
+            f"Created: {self.output_file.resolve()}"
+        )
+
+
+    # ========================================================
+    # GIT
+    # ========================================================
+
+    def git_commit(self):
+        """Add the generated document and commit it."""
+
+        commit_message = self.config.get(
+            "git_commit_message",
+            f"Package {self.assignment_title}"
+        )
+
+        try:
+
+            subprocess.run(
+                ["git", "add", str(self.output_file)],
+                check=True
+            )
+
+            subprocess.run(
+                ["git", "commit", "-m", commit_message],
+                check=True
+            )
+
+            print(
+                f"Git commit created: {commit_message}"
+            )
+
+        except subprocess.CalledProcessError as error:
+
+            print(
+                f"Git operation failed: {error}"
+            )
+
+
+    # ========================================================
+    # BUILD EVERYTHING
+    # ========================================================
+
+    def build(self):
+        """Build the complete homework package."""
+
+        self.add_title()
+        self.add_pseudocode()
+        self.add_screenshots()
+        self.add_source_code()
+        self.save()
+
+        if self.config.get(
+            "git_commit",
+            "false"
+        ).lower() == "true":
+
+            self.git_commit()
 
 
 # ============================================================
@@ -126,140 +328,8 @@ def add_markdown_as_text(document, markdown_file):
 # ============================================================
 
 def main():
-
-    # --------------------------------------------------------
-    # Load configuration
-    # --------------------------------------------------------
-
-    if not CONFIG_FILE.exists():
-        print(f"ERROR: Configuration file not found: {CONFIG_FILE}")
-        return
-
-    config = load_config(CONFIG_FILE)
-
-    required_settings = [
-        "assignment_title",
-        "student_name",
-        "pseudocode_file",
-        "screenshot_directory",
-        "output_file",
-        "source_code_url"
-    ]
-
-    for setting in required_settings:
-        if setting not in config:
-            print(f"ERROR: Missing configuration setting: {setting}")
-            return
-
-    assignment_title = config["assignment_title"]
-    student_name = config["student_name"]
-
-    pseudocode_file = Path(config["pseudocode_file"])
-    screenshot_directory = Path(config["screenshot_directory"])
-    output_file = Path(config["output_file"])
-
-    source_code_url = config["source_code_url"]
-
-
-    # --------------------------------------------------------
-    # Create document
-    # --------------------------------------------------------
-
-    document = Document()
-
-
-    # --------------------------------------------------------
-    # Title
-    # --------------------------------------------------------
-
-    document.add_heading(assignment_title, level=1)
-
-    document.add_paragraph(
-        f"Student: {student_name}"
-    )
-
-
-    # --------------------------------------------------------
-    # PSEUDOCODE
-    # --------------------------------------------------------
-
-    document.add_heading("Pseudocode", level=1)
-
-    if pseudocode_file.exists():
-        add_markdown_as_text(
-            document,
-            pseudocode_file
-        )
-    else:
-        document.add_paragraph(
-            f"Pseudocode file not found: {pseudocode_file}"
-        )
-
-
-    # --------------------------------------------------------
-    # SCREENSHOTS
-    # --------------------------------------------------------
-
-    document.add_heading("Screenshots", level=1)
-
-    if screenshot_directory.exists():
-
-        screenshots = sorted(
-            screenshot_directory.glob("*.png"),
-            key=lambda path: path.name.lower()
-        )
-
-        if screenshots:
-
-            for screenshot in screenshots:
-
-                document.add_paragraph(
-                    screenshot.name
-                )
-
-                paragraph = document.add_paragraph()
-                run = paragraph.add_run()
-
-                run.add_picture(
-                    str(screenshot),
-                    width=Inches(6.0)
-                )
-
-        else:
-            document.add_paragraph(
-                "No PNG screenshots were found."
-            )
-
-    else:
-        document.add_paragraph(
-            f"Screenshot directory not found: "
-            f"{screenshot_directory}"
-        )
-
-
-    # --------------------------------------------------------
-    # SOURCE CODE
-    # --------------------------------------------------------
-
-    document.add_heading("Source Code", level=1)
-
-    paragraph = document.add_paragraph()
-
-    add_hyperlink(
-        paragraph,
-        "View Source Code",
-        source_code_url
-    )
-
-
-    # --------------------------------------------------------
-    # Save document
-    # --------------------------------------------------------
-
-    document.save(output_file)
-
-    print(f"Created: {output_file.resolve()}")
-
+    package = HomeworkPackager()
+    package.build()
 
 if __name__ == "__main__":
     main()
