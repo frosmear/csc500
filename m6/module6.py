@@ -411,9 +411,9 @@ class RetailStore:
                 # Passed test, return as datetime object
                 return purchase_date
 
-        except (ValueError, OverflowError) as error:
-            print(f"Invalid date: {error}")
-            print("Please enter a valid date between today and one year from today.")
+            except (ValueError, OverflowError) as error:
+                print(f"Invalid date: {error}")
+                print("Please enter a valid date between today and one year from today.")
 
     # Get customer information and update the shopping cart
     def get_customer_info(self):
@@ -474,4 +474,4 @@ def main():
     store.display_menu()
 
 if name == "main":
-main()
+    main()
