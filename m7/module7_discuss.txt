@@ -45,5 +45,5 @@ The logic here is obviously not a serious lost-dog search algorithm, but it demo
 
 The bigger point is that functions let us take a piece of logic and give it a name. Built-in functions are great when Python already provides the functionality we need. User-defined functions become more useful when the problem is specific to our program, when the logic has multiple steps, or when we need to reuse that logic. The goal isn't to write our own version of everything. It is to know when the existing tools are enough and when our program needs something more specialized.
 
-In closing, the puppy was a dog, but the industry was a revolution. CSU Football rules!
+In closing, the puppy was a dog, but industry was a revolution. CSU Football rules!
 
