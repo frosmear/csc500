@@ -9,7 +9,7 @@ class Song:
     def __init__(self, title, movies):
         self.title = title
         self.movies = movies
-        self.__goal = "Prevent Bolton from changing the song"
+        self.__goal = "Brag about picking up women at a nightclub"
 
     def sing(self):
         print(f"Singing {self.title}")
