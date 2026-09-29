@@ -88,6 +88,8 @@ class HomeworkPackager:
         run.font.size = Pt(16)
     
         if not self.pseudocode_file.exists():
+            print("Can't find pseudocode, aborting")
+            raise
             self.document.add_paragraph(
                 f"Pseudocode file not found: {self.pseudocode_file}"
             )
