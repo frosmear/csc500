@@ -4,7 +4,6 @@ For example, if I made a `Song` class, the class could define a title, a list of
 
 This reminds me of The Lonely Island's "Jack Sparrow" song, where Michael Bolton keeps hijacking the song to sing about completely different movies. For this example, the instances could be the different movies Bolton decides the song is about.
 
-```python 
 class Song:
     def __init__(self, title, movies):
         self.title = title
@@ -24,7 +23,6 @@ jack_sparrow = Song(
 )
 
 jack_sparrow.sing()
-```
 
 In this example, `Song` is the class and `jack_sparrow` is an instance of that class. The class is the blueprint, while `jack_sparrow` is the actual object created from it.
 
