@@ -1,0 +1,29 @@
+Start program
+
+Set up dictionaries for course rooms, instructors, and meeting times
+Display the CSC500 Course Information System title
+
+Keep asking the user for a course number until they choose X
+    Clean up the course number entered by the user
+
+    If the user enters X
+        Display a thank you message
+        End the program
+
+    If the course number is blank
+        Tell the user it cannot be blank
+        Ask again
+
+    Check if the course number exists in all three dictionaries
+
+    If the course is not found
+        Tell the user the course was not found
+        Ask for another course number
+
+    Otherwise
+        Get the room number
+        Get the instructor
+        Get the meeting time
+        Display all of the course information
+
+End program
