@@ -1,23 +1,29 @@
-Set up dictionaries containing LUT data
-Avoid temptation to do this with JSON
-  Create a dictionary containing each course number and its room number.
-  Create a second dictionary containing each course number and its instructor.
-  Create a third dictionary containing each course number and its meeting time.
+Start program
 
-Ask the user to enter a course number.
+Set up dictionaries for course rooms, instructors, and meeting times
+Display the CSC500 Course Information System title
 
-Remove unnecessary spaces from the beginning and end of the input.
-Convert the course number to uppercase so entries such as csc101 are easier to handle.
+Keep asking the user for a course number until they choose X
+    Clean up the course number entered by the user
 
-Check whether the course number exists in each dictionary.
+    If the user enters X
+        Display a thank you message
+        End the program
 
-If the course does not exist:
-    Display a friendly error message.
-    End the program.
+    If the course number is blank
+        Tell the user it cannot be blank
+        Ask again
 
-If the course exists:
-    Retrieve the room number using the course number.
-    Retrieve the instructor using the course number.
-    Retrieve the meeting time using the course number.
+    Check if the course number exists in all three dictionaries
 
-Display the course number, room number, instructor, and meeting time.
+    If the course is not found
+        Tell the user the course was not found
+        Ask for another course number
+
+    Otherwise
+        Get the room number
+        Get the instructor
+        Get the meeting time
+        Display all of the course information
+
+End program
