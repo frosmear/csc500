@@ -60,8 +60,9 @@ def get_course_number():
 
 # Check whether the course exists in all three dictionaries.
 #
-# Note: The assignment explicity "Create three separate dictionaries to store the following data."
-# Otherwise I'd zip this into one dictionary of lists and deal will blank data
+# Note: The assignment explicitly states:
+# "Create three separate dictionaries to store the following data."
+# Otherwise I'd zip this into one dictionary of lists and deal with blank data
 #
 def course_exists(course_number):
     if course_number not in course_rooms:
@@ -99,7 +100,7 @@ def main():
 
         if course_number is False:
             print("Thank you for using the program.")
-            return True
+            return 
 
         if not course_exists(course_number):
             print(
