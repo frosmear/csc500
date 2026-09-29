@@ -43,9 +43,13 @@ course_meeting_times = {
 # Get a course number from the user and clean up the input.
 def get_course_number():
     while True:
+        print("Enter X to exit the program.")
         course_number = input(
             "Enter course number (example: CSC101): "
         ).strip().upper()
+
+        if course_number == "X":
+            return False
 
         if course_number == "":
             print("Course number cannot be blank.")
@@ -88,19 +92,24 @@ def display_course(course_number):
 
 
 # Main program
-def main():
+def main():        
     print("CSC500 Course Information System")
+    while True:
+        course_number = get_course_number()
 
-    course_number = get_course_number()
+        if course_number is False:
+            print("Thank you for using the program.")
+            return True
 
-    if not course_exists(course_number):
-        print(
-            f"Sorry, course {course_number} was not found. "
-            "Please check the course number and try again."
-        )
-        return
+        if not course_exists(course_number):
+            print(
+                f"Sorry, course {course_number} was not found. "
+                "Please check the course number and try again."
+            )
+            continue
 
-    display_course(course_number)
+        # show it
+        display_course(course_number)
 
 
 if __name__ == "__main__":
