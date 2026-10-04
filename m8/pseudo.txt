@@ -1,5 +1,3 @@
-START
-
     Create ItemToPurchase class
         Store item name
         Store item price
@@ -72,5 +70,3 @@ START
     Get customer information
 
     Run shopping cart menu
-
-END
