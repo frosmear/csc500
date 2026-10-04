@@ -1,0 +1,76 @@
+START
+
+    Create ItemToPurchase class
+        Store item name
+        Store item price
+        Store item quantity
+        Store item description
+        Calculate and print item cost
+
+    Create ShoppingCart class
+        Store customer name
+        Store current date
+        Store list of cart items
+
+        Add item to cart
+            Check for duplicate item
+            Add item to cart if it is not a duplicate
+
+        Remove item from cart
+            Search for item by name
+            Remove matching item
+
+        Modify item
+            Search for item by name
+            Update price and quantity
+
+        Get number of items
+            Add the quantities of all cart items
+            Return total quantity
+
+        Get cost of cart
+            Calculate the cost of each item
+            Add all item costs together
+            Return total cost
+
+        Print total
+            Display customer name and date
+            Display each item and its cost
+            Display total number of items
+            Display total cost
+
+        Print descriptions
+            Display each item name and description
+
+    Create RetailStore class
+        Create a shopping cart
+
+        Get customer name
+            Ask user for customer name
+            Continue until a name is entered
+
+        Get purchase date
+            Ask user for order date
+            Validate the date
+            Store the date in the shopping cart
+
+        Display menu
+            Display available menu choices
+
+        Process menu choices
+            a = Add item
+            r = Remove item
+            c = Change item quantity
+            i = Display item descriptions
+            o = Display shopping cart
+            q = Quit
+
+        Continue displaying menu until user selects q
+
+    Create RetailStore object
+
+    Get customer information
+
+    Run shopping cart menu
+
+END
