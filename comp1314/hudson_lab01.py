@@ -35,11 +35,11 @@ print("i)", 2.0 ** 4)     # 16.0
 print("j)", 10 ** 3)      # 1000
 
 # k) Why are there decimal points in d) and e)?
-print("\nk) The / operator performs true division in Python.")
+print("k) The / operator performs true division in Python.")
 print("   It always returns a floating-point number (float),")
 print("   even when the result is a whole number.")
 
 # l) Why are there NO decimal points in f) and g)?
-print("\nl) The // operator performs floor division.")
+print("l) The // operator performs floor division.")
 print("   It rounds the result down to the nearest whole number")
 print("   and returns an integer (int) when both operands are integers.")
