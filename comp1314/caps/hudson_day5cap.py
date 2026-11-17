@@ -3,7 +3,7 @@
 Convert IP addresses, calculate network addresses, and display results.
 """
 
-import socket
+import subprocess
 import sys
 
 # Part A - Convert IP address to integer
@@ -32,7 +32,10 @@ def calculate(ip_integer, cidr):
 # Part C - Convert integer to IP address string
 def make_ip_str(ip_num):
     """Convert an integer IP address to dotted-decimal notation."""
-    ip_str = socket.inet_ntoa(ip_num.to_bytes(4, byteorder="big"))
+    ip_str = ".".join(
+        str((ip_num >> shift) & 0xFF)
+        for shift in (24, 16, 8, 0)
+    )
     return ip_str
 
 
@@ -57,18 +60,17 @@ def pretty_print(my_tuple):
 
 # Determine local machine IP addresses
 def getLocalIPs():
-    local_ips = set()
-    hostname = socket.gethostname()
+    result = subprocess.run(
+        ["hostname", "-I"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
 
-    try:
-        for result in socket.getaddrinfo(hostname, None, socket.AF_INET):
-            ip_address = result[4][0]
-            if not ip_address.startswith("127."):
-                local_ips.add(ip_address)
-    except socket.gaierror:
-        pass
-
-    return sorted(local_ips)
+    return sorted(
+        ip for ip in result.stdout.split()
+        if "." in ip
+    )
 
 
 # Validate IPv4 address

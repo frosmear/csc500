@@ -3,7 +3,7 @@
 Convert IP addresses to integers and calculate network addresses.
 """
 
-import socket
+import subprocess   # only used to pull IP of local machine
 
 # Hardcoded IP address from example
 hardcoded_ip_address = "192.168.30.125"
@@ -32,22 +32,24 @@ def calculateNetwork(ip_integer, cidr):
 
 # Convert integer to IP address string
 def convertInt2IP(ip_integer):
-    return socket.inet_ntoa(ip_integer.to_bytes(4, byteorder="big"))
+    return ".".join(
+        str((ip_integer >> shift) & 0xFF)
+        for shift in (24, 16, 8, 0)
+    )
 
-# Determine local machine IP addresses
+# Determine local machine IPv4 addresses
 def getLocalIPs():
-    local_ips = set()
-    hostname = socket.gethostname()
-
-    try:
-        for result in socket.getaddrinfo(hostname, None, socket.AF_INET):
-            ip_address = result[4][0]
-            if not ip_address.startswith("127."):
-                local_ips.add(ip_address)
-    except socket.gaierror:
-        pass
-
-    return sorted(local_ips)
+    result = subprocess.run(
+        ["hostname", "-I"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    # Need to get rid of IPv6 results
+    return sorted(
+        ip for ip in result.stdout.split()
+        if "." in ip
+    )
 
 # Display IP address and network information
 def printIPInfo(ip_address, cidr):
