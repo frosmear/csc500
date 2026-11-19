@@ -7,10 +7,13 @@ import sys
 
 # Part A - Convert IP address to integer
 def make_ip_num(ip_str):
-    ip_num = int.from_bytes(
-        bytes(int(octet) for octet in ip_str.split(".")),
-        byteorder="big"
-    )
+    octets = ip_str.split(".")
+
+    ip_num = 0
+
+    for octet in octets:
+        ip_num = ip_num * 256 + int(octet)
+
     return ip_num
 
 
