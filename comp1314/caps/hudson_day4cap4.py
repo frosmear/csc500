@@ -8,16 +8,18 @@ hardcoded_ip_address = "192.168.30.125"
 hardcoded_cidr = 24
 
 # Part A - Convert IP address to integer
-def convertIP2int(ipstring):
-    ip_integer = int.from_bytes(
-        bytes(int(octet) for octet in ipstring.split(".")),
+def make_ip_num(ip_str):
+    ip_num = int.from_bytes(
+        bytes(int(octet) for octet in ip_str.split(".")),
         byteorder="big"
     )
-    return ip_integer
+    return ip_num
 
 
 # Part B - Calculate network ID, first, last, and broadcast addresses
-def calculate(ip_integer, cidr):
+def calculate(ip_str, cidr):
+    ip_integer = make_ip_num(ip_str)
+
     host_bits = 32 - cidr
     host_mask = (1 << host_bits) - 1
     network_mask = (0xFFFFFFFF << host_bits) & 0xFFFFFFFF
@@ -43,8 +45,6 @@ def make_ip_str(ip_num):
 # Part D - Display IP address and network information
 def pretty_print(my_tuple):
     """Display IP and network information from a five-integer tuple."""
-    ip_integer, network_id, first, last, broadcast = my_tuple
-
     labels = (
         "Integer Value:",
         "Network ID:",
@@ -56,13 +56,13 @@ def pretty_print(my_tuple):
     print()
 
     for label, ip_num in zip(labels, my_tuple):
-        print(f"{label:<17} {str(ip_num)} ({make_ip_str(ip_num)})")
+        ip_str = make_ip_str(ip_num)
+        print(f"{label:<17} {str(ip_num)} ({ip_str})")
 
 
 # Display IP address and network information
 def display_ip_info(ip_address, cidr):
-    ip_integer = convertIP2int(ip_address)
-    my_tuple = calculate(ip_integer, cidr)
+    my_tuple = calculate(ip_address, cidr)
 
     print(f"\nIP Address: {ip_address}/{cidr}")
     pretty_print(my_tuple)
