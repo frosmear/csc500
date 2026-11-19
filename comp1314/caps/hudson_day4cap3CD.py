@@ -3,8 +3,6 @@
 Convert IP addresses, calculate network addresses, and display results.
 """
 
-import subprocess
-
 # Hardcoded IP address from example
 hardcoded_ip_address = "192.168.30.125"
 hardcoded_cidr = 24
@@ -55,21 +53,6 @@ def pretty_print(my_tuple):
     print(f"Broadcast:        {str(broadcast)} ({make_ip_str(broadcast)})")
 
 
-# Determine local machine IP addresses
-def getLocalIPs():
-    result = subprocess.run(
-        ["hostname", "-I"],
-        capture_output=True,
-        text=True,
-        check=True
-    )
-
-    return sorted(
-        ip for ip in result.stdout.split()
-        if "." in ip
-    )
-
-
 # Main program
 def main():
 
@@ -81,18 +64,7 @@ def main():
     my_tuple = calculate(ip_integer, hardcoded_cidr)
     pretty_print(my_tuple)
 
-    # Display local machine IP addresses and network information
-    print()
-    print("Local Machine IP Addresses")
-
-    for ip_address in getLocalIPs():
-        ip_integer = convertIP2int(ip_address)
-        my_tuple = calculate(ip_integer, hardcoded_cidr)
-
-        print(f"\nIP Address: {ip_address}/{hardcoded_cidr}")
-        pretty_print(my_tuple)
-
-    # I like whitespace before the linux prompt
+    # I like whitespace before the prompt
     print()
 
 
