@@ -3,8 +3,6 @@
 Convert IP addresses, calculate network addresses, and display results.
 """
 
-import subprocess
-
 # Hardcoded IP address from example
 hardcoded_ip_address = "192.168.30.125"
 hardcoded_cidr = 24
@@ -61,21 +59,6 @@ def pretty_print(my_tuple):
         print(f"{label:<17} {str(ip_num)} ({make_ip_str(ip_num)})")
 
 
-# Determine local machine IP addresses
-def getLocalIPs():
-    result = subprocess.run(
-        ["hostname", "-I"],
-        capture_output=True,
-        text=True,
-        check=True
-    )
-
-    return sorted(
-        ip for ip in result.stdout.split()
-        if "." in ip
-    )
-
-
 # Display IP address and network information
 def display_ip_info(ip_address, cidr):
     ip_integer = convertIP2int(ip_address)
@@ -93,14 +76,7 @@ def main():
     print("Example address from assignment")
     display_ip_info(hardcoded_ip_address, hardcoded_cidr)
 
-    # Display local machine IP addresses and network information
-    print()
-    print("Local Machine IP Addresses")
-
-    for ip_address in getLocalIPs():
-        display_ip_info(ip_address, hardcoded_cidr)
-
-    # I like whitespace before the linux prompt
+    # I like whitespace before the prompt
     print()
 
 
