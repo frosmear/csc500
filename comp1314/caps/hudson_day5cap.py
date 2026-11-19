@@ -3,7 +3,6 @@
 Convert IP addresses, calculate network addresses, and display results.
 """
 
-import subprocess
 import sys
 
 # Part A - Convert IP address to integer
@@ -58,21 +57,6 @@ def pretty_print(my_tuple):
         print(f"{label:<17} {str(ip_num)} ({make_ip_str(ip_num)})")
 
 
-# Determine local machine IP addresses
-def getLocalIPs():
-    result = subprocess.run(
-        ["hostname", "-I"],
-        capture_output=True,
-        text=True,
-        check=True
-    )
-
-    return sorted(
-        ip for ip in result.stdout.split()
-        if "." in ip
-    )
-
-
 # Validate IPv4 address
 def validate_ip(ip_address):
     octets = ip_address.split(".")
@@ -106,14 +90,6 @@ def get_arguments():
         print(f"  python3 {sys.argv[0]} <IPv4 address> <CIDR>")
         print("\nExamples:")
         print(f"  python3 {sys.argv[0]} 192.168.30.125 24")
-
-        local_ips = getLocalIPs()
-
-        if local_ips:
-            print(f"  python3 {sys.argv[0]} {local_ips[0]} 16")
-        else:
-            print("  No local IPv4 address was found for a second example.")
-
         print("\nProvide an IPv4 address and CIDR as command-line arguments.")
         return None
 
