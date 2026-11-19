@@ -8,25 +8,27 @@ hardcoded_ip_address = "192.168.30.125"
 hardcoded_cidr = 24
 
 # Part A - Convert IP address to an integer
-def convertIP2int(ipstring):
-    ip_integer = int.from_bytes(
-        bytes(int(octet) for octet in ipstring.split(".")),
+def make_ip_num(ip_str):
+    ip_num = int.from_bytes(
+        bytes(int(octet) for octet in ip_str.split(".")),
         byteorder="big"
     )
-    return ip_integer
+    return ip_num
 
 # Part B - Calculate network ID, first, last, and broadcast addresses
-def calculateNetwork(ip_integer, cidr):
+def calculate(ip_str, cidr):
+    IPaddress = make_ip_num(ip_str)
+
     host_bits = 32 - cidr
     host_mask = (1 << host_bits) - 1
     network_mask = (0xFFFFFFFF << host_bits) & 0xFFFFFFFF
 
-    network_id = ip_integer & network_mask
-    broadcast = network_id | host_mask
-    first = network_id + 1
-    last = broadcast - 1
+    NetworkID = IPaddress & network_mask
+    Broadcast = NetworkID | host_mask
+    Firsthost = NetworkID + 1
+    Lasthost = Broadcast - 1
 
-    return network_id, first, last, broadcast
+    return IPaddress, NetworkID, Firsthost, Lasthost, Broadcast
 
 # Convert integer to IP address string
 def convertInt2IP(ip_integer):
@@ -37,10 +39,8 @@ def convertInt2IP(ip_integer):
 
 # Display IP address and network information
 def printIPInfo(ip_address, cidr):
-    ip_integer = convertIP2int(ip_address)
-
-    network_id, first, last, broadcast = calculateNetwork(
-        ip_integer, cidr
+    ip_integer, network_id, first, last, broadcast = calculate(
+        ip_address, cidr
     )
 
     print()
